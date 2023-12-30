@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static 'autenticar/css/styles.css' %}">
+{% endblock head %}
+
+{% block title %} Cadastre-se {% endblock title %}
+
+{% block container %}
+  <div class="container-fluid">
+    <div class="row">
+
+        <div class="col-md-3 sidebar" style="height: 750px;">
+            <div class="logo_sidebar">
+                <h2 class="logo">
+                  <img src="{% static 'autenticar/img/logo.png' %}" class="img_logo_sidebar"> 
+                </h2>
+            </div>
+
+            <div class="corpo_sidebar">
+                <div>
+                    <p class="cor_branca descricao">Centro de Ação Comunitária de Entidades Organizacionais</p>
+                    <p style="margin-top: 10px;" class="cor_branca descricao">Área de Funcionarios</p>
+                    <br>
+                    <a href="{% url 'login' %}" class="btn btn-secondary mb-4">Login</a>
+                    <br>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-md-9 fundo">
+            <div class="area_cadastrar">
+                <form action="{% url 'cadastro' %}" method="POST">
+
+                    {% csrf_token %}
+                    <h2 class="titulo_area_cadastrar">Cadastre-se</h2>
+                    <br>
+                    {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert {{message.tags}}">
+                                    {{message}}
+                                </div>
+                            {% endfor %}
+                    {% endif %}
+                    <br>
+
+                    <input name="username" type="text" class="input_cadastrar input_cadastrar_nome" placeholder="Usuario...">
+                    <br>
+                    <br>
+                    <input name="senha" type="password" class="input_cadastrar input_cadastrar_senha" placeholder="Senha...">
+                    <br>
+                    <input type="submit" value="Cadastrar" class="btn btn-primary btn_cadastrar" style="background-color: #0f51a1;">
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+  </div>
+{% endblock container %}

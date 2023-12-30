@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Adicionar Nome{% endblock title %}
+
+{% block container %}
+  <div class="container mt-4">
+    <h1>Adicionar Nome</h1>
+    <form action="{% url 'adicionar_nome' %}" method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="nome">Nome:</label>
+          <input class="form-control" type="text" placeholder="Digite o nome do Funcionario para ser registrado..." name="nome" required><br>
+          <button type="submit" class="btn btn-primary">Adicionar Nome</button>
+        </fieldset>
+      </div>
+    </form>
+  </div>
+{% endblock container %}

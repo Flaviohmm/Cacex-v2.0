@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Home{% endblock title %}
+
+{% block container %}
+  {% include "visualizar_tabela.html" %}
+  <div class="m-4">
+    <h2>Adicionar Novo Registro</h2>
+    <a href="{% url 'adicionar_registro' %}" class="btn btn-primary">Adicionar Novo Registro</a>
+  </div>
+  <div class="m-4">
+    <h2>Adicionar Novo Nome</h2>
+    <a href="{% url 'adicionar_nome' %}" class="btn btn-primary">Adicionar Novo Nome</a>
+  </div>
+  <div class="m-4">
+    <h2>Adicionar Novo Orgão/Setor</h2>
+    <a href="{% url 'adicionar_orgao_setor' %}" class="btn btn-primary">Adicionar Novo Orgão/Setor</a>
+  </div>
+  <div class="m-4">
+    <h2>Adicionar Novo Município</h2>
+    <a href="{% url 'adicionar_municipio' %}" class="btn btn-primary">Adicionar Novo Município</a>
+  </div>
+  <div class="m-4">
+    <h2>Adicionar Nova Atividade</h2>
+    <a href="{% url 'adicionar_atividade' %}" class="btn btn-primary">Adicionar Nova Atividade</a>
+  </div>
+{% endblock container %}

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block header %}{% endblock header %}
+
+{% block container %}
+  <h3 class="m-4">Tabela de Atividades dos Funcionários</h3>
+  <div class="row">
+    <div class="col-12">
+      <div class="card bg-light ms-4 me-4 mb-4">
+        <div class="card-header">
+          <i class="fa-solid fa-list fa-lg"></i> Registro de Atividades dos Funcionários
+        </div>
+        <div class="card-body">
+          <p class="card-text">
+            <div class="table-responsive">
+              <table class='table table-hover'>
+                <thead>
+                  <tr>
+                    <th scope="col">NOME</th>
+                    <th scope="col">ORGÃO/SETOR</th>
+                    <th scope="col">MUNICÍPIO</th>
+                    <th scope="col">ATIVIDADE</th>
+                    <th scope="col">Nº CONVÊNIO</th>
+                    <th scope="col">PARLAMENTAR</th>
+                    <th scope="col">OBJETO</th>
+                    <th scope="col">OGE/OGU</th>
+                    <th scope="col">CP-PREFEITURA</th>
+                    <th scope="col">VALOR TOTAL</th>
+                    <th scope="col">VALOR LIBERADO</th>
+                    <th scope="col">FALTA LIBERAR</th>
+                    <th scope="col">PRAZO DE VIGÊNCIA</th>
+                    <th scope="col">SITUAÇÃO</th>
+                    <th scope="col">PROVIDÊNCIA</th>
+                    <th scope="col">STATUS</th>
+                    <th scope="col">DATA DE RECEPÇÃO</th>
+                    <th scope="col">DATA DE ÍNICIO</th>
+                    <th scope="col">DOCUMENTO PENDENTE</th>
+                    <th scope="col">DOCUMENTO CANCELADO</th>
+                    <th scope="col">DATA DO FIM</th>
+                    <th scope="col">DURAÇÃO DE DIAS ÚTEIS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for registro in registros %}
+                    <tr>
+                      <td>{{ registro.nome.nome }}</td>
+                      <td>{{ registro.orgao_setor.orgao_setor }}</td>
+                      <td>{{ registro.municipio.municipio }}</td>
+                      <td>{{ registro.atividade.atividade }}</td>
+                      <td>{{ registro.num_convenio }}</td>
+                      <td>{{ registro.parlamentar }}</td>
+                      <td>{{ registro.objeto }}</td>
+                      <td>{{ registro.oge_ogu }}</td>
+                      <td>{{ registro.cp_prefeitura }}</td>
+                      <td>{{ registro.calcular_valores.valor_total }}</td>
+                      <td>{{ registro.valor_liberado }}</td>
+                      <td>{{ registro.calcular_valores.falta_liberar }}</td>
+                      <td>{{ registro.prazo_vigencia }}</td>
+                      <td>{{ registro.situacao }}</td>
+                      <td>{{ registro.providencia }}</td>
+                      <td>{{ registro.status }}</td>
+                      <td>{{ registro.data_recepcao }}</td>
+                      <td>{{ registro.data_inicio }}</td>
+                      <td>{% if registro.documento_pendente %}Sim{% else %}Não{% endif %}</td>
+                      <td>{% if registro.documento_cancelado %}Sim{% else %}Não{% endif %}</td>
+                      <td>{{ registro.data_fim }}</td>
+                      <td>{{ registro.dia_trabalho_total }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              {% if registros %}
+                <p class="m-4">Nº de Registros: {{ registros.count}}</p>
+              {% else %}
+                <p>registros está vazio ou não está sendo passado corretamente.</p>
+              {% endif %}
+            </div>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>  
+{% endblock container %}

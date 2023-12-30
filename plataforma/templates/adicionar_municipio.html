@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Adicionar Município{% endblock title %}
+
+{% block container %}
+  <div class="container mt-4">
+    <h1>Adicionar Município</h1>
+    <form action="{% url 'adicionar_municipio' %}" method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="municipio">Município:</label>
+          <input class="form-control" type="text" placeholder="Digite o nome do Município para ser registrado..." name="municipio" required><br>
+          <button type="submit" class="btn btn-primary">Adicionar Município</button>
+        </fieldset>
+      </div>
+    </form>
+  </div>
+{% endblock container %}

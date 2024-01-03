@@ -6,14 +6,26 @@ import numpy as np
 class Nome(models.Model):
     nome = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.nome
+    
 class Setor(models.Model):
     orgao_setor = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.orgao_setor
+    
 class Municipio(models.Model):
     municipio = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.municipio
+
 class Atividade(models.Model):
     atividade = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.atividade
 
 class Status(models.Model):
     NAO_INICIADO = 'nao_iniciado', 'Não Iniciado'
@@ -80,3 +92,6 @@ class RegistroFuncionarios(models.Model):
         self.duracao_dias_uteis = self.dia_trabalho_total()
 
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.nome + " | " + self.orgao_setor + " | " + self.municipio + " | " + self.atividade + " | " + self.num_convenio + " | " + self.parlamentar + " | " + self.objeto + " | " + self.oge_ogu + " | " + self.cp_prefeitura + " | " + self.valor_total + " | " + self.valor_liberado + " | " + self.falta_liberar

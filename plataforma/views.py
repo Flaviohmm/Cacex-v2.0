@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from .models import RegistroFuncionarios, Nome, Setor, Municipio, Atividade, Status
 from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
 
@@ -92,6 +93,10 @@ def adicionar_registro(request):
         exibir_modal, dias_restantes = exibir_modal_prazo_vigencia(registro)
         registro.duracao_dias_uteis = dia_trabalho_total(registro.data_inicio, registro.data_fim)
 
+        # Adicione a mensagem para notificação
+        if exibir_modal:
+            messages.info(request, f'O convênio {registro.num_convenio} está com prazo de vigência proximo do seu termino. Restam {dias_restantes} dias.')
+
         return redirect('home')
     
     # Recupere as opções para os campos estrangeiros...
@@ -106,6 +111,7 @@ def adicionar_registro(request):
         'setores': setores,
         'municipios': municipios,
         'atividades': atividades,
+        'messages': messages.get_messages(request),
         'registros': registros,
     }
 

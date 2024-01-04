@@ -15,6 +15,18 @@
           <i class="fa-solid fa-list fa-lg"></i> Registro de Atividades dos Funcionários
         </div>
         <div class="card-body">
+          {% if messages %}
+            <ul class="messages">
+              {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+              {% endfor %}
+            </ul>
+
+            {# Teste para verificar se a mensagem de teste aparece #}
+            {% if messages.first.tags == 'info' and 'Teste de mensagem' in messages.first %} 
+              {% include 'notification_modal.html' %}
+            {% endif %}
+          {% endif %}
           <p class="card-text">
             <div class="table-responsive">
               <table class='table table-hover'>
@@ -95,5 +107,6 @@
         </div>
       </div>
     </div>
-  </div>  
+  </div> 
+  
 {% endblock container %}

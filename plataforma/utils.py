@@ -15,8 +15,12 @@ def calcular_valores(registro):
 
 def exibir_modal_prazo_vigencia(registro):
     hoje = timezone.now().date()
-    dias_restantes = (registro.prazo_vigencia - hoje).days
-    return dias_restantes <= 30, dias_restantes
+    try:
+        dias_restantes = (registro.prazo_vigencia - hoje).days
+        return dias_restantes <= 30, dias_restantes
+    except Exception as e:
+        # Log da exceção ou outro tratamento apropriado
+        return False, 0
 
 
 def dia_trabalho_total(data_inicio, data_fim):

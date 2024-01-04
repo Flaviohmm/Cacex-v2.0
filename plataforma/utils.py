@@ -1,18 +1,35 @@
 from django.utils import timezone
+from decimal import Decimal
+from datetime import datetime, timedelta
 import numpy as np
 
 
 def calcular_valores(registro):
-    registro.valor_total = registro.oge_ogu + registro.cp_prefeitura
-    registro.falta_liberar = registro.valor_total - registro.valor_liberado
+    # Converter os valores para decimais
+    valor_total = Decimal(str(registro.oge_ogu)) + Decimal(str(registro.cp_prefeitura))
+    falta_liberar = valor_total - Decimal(str(registro.valor_liberado))
+
+    # Calcular o Valor Total e Falta Liberar
+    return valor_total, falta_liberar
+
 
 def exibir_modal_prazo_vigencia(registro):
     hoje = timezone.now().date()
     dias_restantes = (registro.prazo_vigencia - hoje).days
     return dias_restantes <= 30, dias_restantes
 
-def dia_trabalho_total(data_inicio, data_fim, feriado_facultativo=[]):
-    if data_inicio and data_fim:
-        dias_uteis = np.busday_count(data_inicio, data_fim, holidays=feriado_facultativo)
-        return dias_uteis
-    return 0
+
+def dia_trabalho_total(data_inicio, data_fim):
+    if not data_inicio or not data_fim:
+        return 0
+
+    # Converta para objetos date, se necessário
+    if isinstance(data_inicio, str):
+        data_inicio = datetime.strptime(data_inicio, "%Y-%m-%d").date()
+    if isinstance(data_fim, str):
+        data_fim = datetime.strptime(data_fim, "%Y-%m-%d").date()
+
+    delta = data_fim - data_inicio
+    dias_uteis = sum(1 for i in range(delta.days + 1) if (data_inicio + timedelta(days=i)).weekday() < 5)
+
+    return dias_uteis

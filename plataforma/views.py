@@ -88,7 +88,7 @@ def adicionar_registro(request):
         registro.save()
 
         # Chame as funções utilitárias
-        calcular_valores(registro)
+        registro.valor_total, registro.falta_liberar = calcular_valores(registro)
         exibir_modal, dias_restantes = exibir_modal_prazo_vigencia(registro)
         registro.duracao_dias_uteis = dia_trabalho_total(registro.data_inicio, registro.data_fim)
 

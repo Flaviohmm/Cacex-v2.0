@@ -2,6 +2,8 @@
 
 {% load static %}
 
+{% load humanize %}
+
 {% block header %}{% endblock header %}
 
 {% block container %}
@@ -52,20 +54,32 @@
                       <td>{{ registro.num_convenio }}</td>
                       <td>{{ registro.parlamentar }}</td>
                       <td>{{ registro.objeto }}</td>
-                      <td>{{ registro.oge_ogu }}</td>
-                      <td>{{ registro.cp_prefeitura }}</td>
-                      <td>{{ registro.calcular_valores.valor_total }}</td>
-                      <td>{{ registro.valor_liberado }}</td>
-                      <td>{{ registro.calcular_valores.falta_liberar }}</td>
+                      <td>R$ {{ registro.oge_ogu|floatformat:2|intword }}</td>                    
+                      <td>R$ {{ registro.cp_prefeitura|floatformat:2|intword }}</td>
+                      <td>R$ {{ registro.calcular_valores.0|floatformat:2|intword }}</td>
+                      <td>R$ {{ registro.valor_liberado|floatformat:2|intword }}</td>
+                      <td>R$ {{ registro.calcular_valores.1|floatformat:2|intword }}</td>
                       <td>{{ registro.prazo_vigencia }}</td>
                       <td>{{ registro.situacao }}</td>
                       <td>{{ registro.providencia }}</td>
                       <td>{{ registro.status }}</td>
                       <td>{{ registro.data_recepcao }}</td>
-                      <td>{{ registro.data_inicio }}</td>
+                      <td>
+                        {% if registro.data_inicio %}
+                            {{ registro.data_inicio }}
+                        {% else %}
+                            Sem data de início
+                        {% endif %}
+                      </td>
                       <td>{% if registro.documento_pendente %}Sim{% else %}Não{% endif %}</td>
                       <td>{% if registro.documento_cancelado %}Sim{% else %}Não{% endif %}</td>
-                      <td>{{ registro.data_fim }}</td>
+                      <td>
+                        {% if registro.data_fim %}
+                            {{ registro.data_fim }}
+                        {% else %}
+                            Sem data de término
+                        {% endif %}
+                      </td>
                       <td>{{ registro.dia_trabalho_total }}</td>
                     </tr>
                   {% endfor %}

@@ -117,10 +117,8 @@
         <fieldset class="form-group">
           <legend class="mt-4">Documento Pendente:</legend>
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" {% if documento_pendente %}checked{% endif %}>
-            <label class="form-check-label" for="flexCheckDefault">
-              Sim
-            </label>
+            <input class="form-check-input" type="checkbox" id="documento_pendente_{{ forloop.counter }}" name="documento_pendente" value="true" {% if registro.documento_pendente %}checked{% endif %}>
+            <label class="form-check-label" for="documento_pendente_{{ forloop.counter }}">{{ registro.documento_pendente|yesno:"Não,Sim" }}</label>
           </div>
         </fieldset>
       </div>
@@ -128,10 +126,8 @@
         <fieldset class="form-group">
           <legend class="mt-4">Documento Cancelado:</legend>
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="flexCheckCancelado" {% if documento_cancelado %}checked{% endif %}>
-            <label class="form-check-label" for="flexCheckCancelado">
-              Sim
-            </label>
+            <input class="form-check-input" type="checkbox" id="documento_cancelado_{{ forloop.counter }}" name="documento_cancelado" value="true" {% if registro.documento_cancelado %}checked{% endif %}>
+            <label class="form-check-label" for="documento_cancelado_{{ forloop.counter }}">{{ registro.documento_cancelado|yesno:"Não,Sim" }}</label>
           </div>
         </fieldset>
       </div>

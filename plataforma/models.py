@@ -101,7 +101,7 @@ class RegistroFuncionarios(models.Model):
         if not self.prazo_vigencia or not self.data_recepcao:
             raise ValueError("A data de prazo de vigência e data de recepção são obrigatórias.")
 
-        if self.prazo_vigencia and self.prazo_vigencia.strip():  # Verifica se a string não está vazia após remoção de espaços
+        if self.prazo_vigencia and isinstance(self.prazo_vigencia, str) and self.prazo_vigencia.strip():  # Verifica se a string não está vazia após remoção de espaços
             try:
                 # Converta a string para objeto date
                 self.prazo_vigencia = datetime.strptime(self.prazo_vigencia, '%Y-%m-%d').date()

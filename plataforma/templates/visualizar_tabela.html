@@ -90,7 +90,7 @@
                       <td>{{ registro.dia_trabalho_total }}</td>
                     </tr>
                     <!-- Modal -->
-                    {% with dias_restantes=registro.exibir_modal_prazo_vigencia.1 %}
+                    {% comment %} {% with dias_restantes=registro.exibir_modal_prazo_vigencia.1 %}
                       {% if dias_restantes <= 30 %}
                         <div class="modal" id="notificationModal{{ registro.id }}" tabindex="-1" aria-labelledby="notificationModalLabel{{ registro.id }}" aria-hidden="true">
                           <div class="modal-dialog" role="document">
@@ -111,8 +111,43 @@
                             </div>
                           </div>
                         </div>
+
+                        <!-- Scripts -->
+                        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+                        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+                        <script>
+                          function removeModalBackdrop() {
+                            // Adiciona um ouvinte para o evento 'hidden.bs.modal' antes de remover o backdrop
+                            $('.modal').on('hidden.bs.modal', function () {
+                              $(this).next('.modal-backdrop').remove();
+                            });
+                          }
+                          
+                          $(document).ready(function () {
+                            // Inicializa todos os modais com id começando por "notificationModal"
+                            $('[id^=notificationModal]').modal('show');
+                          
+                            // Adiciona evento para quando o modal for totalmente fechado
+                            $('body').on('hidden.bs.modal', '.modal', function () {
+                              // Obtém o ID do próximo modal a ser exibido
+                              var nextModalId = $(this).find('[data-next-modal]').data('next-modal');
+                          
+                              // Verifica se há um próximo modal e o exibe
+                              if (nextModalId) {
+                                $('#' + nextModalId).modal('show');
+                              }
+                            });
+                          
+                            // Adiciona evento ao botão "Close" para chamar a função de remoção do backdrop
+                            $('#customCloseButton').on('click', function () {
+                              // Oculta o modal antes de remover o backdrop
+                              $('[id^=notificationModal]').modal('hide');
+                              removeModalBackdrop();
+                            });
+                          });
+                        </script>
                       {% endif %}
-                    {% endwith %}
+                    {% endwith %} {% endcomment %}
                   {% endfor %}
                 </tbody>
               </table>
@@ -128,39 +163,6 @@
       </div>
     </div>
   </div> 
-  <!-- Scripts -->
-  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    function removeModalBackdrop() {
-      // Adiciona um ouvinte para o evento 'hidden.bs.modal' antes de remover o backdrop
-      $('.modal').on('hidden.bs.modal', function () {
-        $(this).next('.modal-backdrop').remove();
-      });
-    }
-    
-    $(document).ready(function () {
-      // Inicializa todos os modais com id começando por "notificationModal"
-      $('[id^=notificationModal]').modal('show');
-    
-      // Adiciona evento para quando o modal for totalmente fechado
-      $('body').on('hidden.bs.modal', '.modal', function () {
-        // Obtém o ID do próximo modal a ser exibido
-        var nextModalId = $(this).find('[data-next-modal]').data('next-modal');
-    
-        // Verifica se há um próximo modal e o exibe
-        if (nextModalId) {
-          $('#' + nextModalId).modal('show');
-        }
-      });
-    
-      // Adiciona evento ao botão "Close" para chamar a função de remoção do backdrop
-      $('#customCloseButton').on('click', function () {
-        // Oculta o modal antes de remover o backdrop
-        $('[id^=notificationModal]').modal('hide');
-        removeModalBackdrop();
-      });
-    });
-  </script>
+  
   
 {% endblock container %}

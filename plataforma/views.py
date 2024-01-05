@@ -94,8 +94,8 @@ def adicionar_registro(request):
         registro.duracao_dias_uteis = dia_trabalho_total(registro.data_inicio, registro.data_fim)
 
         # Adicione a mensagem para notificação
-        if exibir_modal:
-            messages.info(request, f'O convênio {registro.num_convenio} está com prazo de vigência proximo do seu vencimento. Restam {dias_restantes} dias.')
+        # if exibir_modal:
+        #     messages.info(request, f'O convênio {registro.num_convenio} está com prazo de vigência proximo do seu vencimento. Restam {dias_restantes} dias.')
 
         return redirect('home')
     

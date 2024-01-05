@@ -95,7 +95,7 @@ def adicionar_registro(request):
 
         # Adicione a mensagem para notificação
         if exibir_modal:
-            messages.info(request, f'O convênio {registro.num_convenio} está com prazo de vigência proximo do seu termino. Restam {dias_restantes} dias.')
+            messages.info(request, f'O convênio {registro.num_convenio} está com prazo de vigência proximo do seu vencimento. Restam {dias_restantes} dias.')
 
         return redirect('home')
     

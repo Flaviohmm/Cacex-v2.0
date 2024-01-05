@@ -20,12 +20,7 @@
               {% for message in messages %}
                 <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
               {% endfor %}
-            </ul>
-
-            {# Teste para verificar se a mensagem de teste aparece #}
-            {% if messages.first.tags == 'info' and 'Teste de mensagem' in messages.first %} 
-              {% include 'notification_modal.html' %}
-            {% endif %}
+            </ul>  
           {% endif %}
           <p class="card-text">
             <div class="table-responsive">
@@ -94,9 +89,34 @@
                       </td>
                       <td>{{ registro.dia_trabalho_total }}</td>
                     </tr>
+                    <!-- Modal -->
+                    {% with dias_restantes=registro.exibir_modal_prazo_vigencia.1 %}
+                      {% if dias_restantes <= 30 %}
+                        <div class="modal" id="notificationModal{{ registro.id }}" tabindex="-1" aria-labelledby="notificationModalLabel{{ registro.id }}" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="notificationModalLabel{{ registro.id }}">Notificação de Prazo</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="customCloseButton">
+                                  <span aria-hidden="true"></span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <p>O convênio {{ registro.num_convenio }} está com o prazo de vigência próximo do seu vencimento. Restam {{ dias_restantes }} dias.</p>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-next-modal="{{ registro.next_modal }}">Next</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="customCloseButton">Close</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      {% endif %}
+                    {% endwith %}
                   {% endfor %}
                 </tbody>
               </table>
+
               {% if registros %}
                 <p class="m-4">Nº de Registros: {{ registros.count}}</p>
               {% else %}
@@ -108,5 +128,39 @@
       </div>
     </div>
   </div> 
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    function removeModalBackdrop() {
+      // Adiciona um ouvinte para o evento 'hidden.bs.modal' antes de remover o backdrop
+      $('.modal').on('hidden.bs.modal', function () {
+        $(this).next('.modal-backdrop').remove();
+      });
+    }
+    
+    $(document).ready(function () {
+      // Inicializa todos os modais com id começando por "notificationModal"
+      $('[id^=notificationModal]').modal('show');
+    
+      // Adiciona evento para quando o modal for totalmente fechado
+      $('body').on('hidden.bs.modal', '.modal', function () {
+        // Obtém o ID do próximo modal a ser exibido
+        var nextModalId = $(this).find('[data-next-modal]').data('next-modal');
+    
+        // Verifica se há um próximo modal e o exibe
+        if (nextModalId) {
+          $('#' + nextModalId).modal('show');
+        }
+      });
+    
+      // Adiciona evento ao botão "Close" para chamar a função de remoção do backdrop
+      $('#customCloseButton').on('click', function () {
+        // Oculta o modal antes de remover o backdrop
+        $('[id^=notificationModal]').modal('hide');
+        removeModalBackdrop();
+      });
+    });
+  </script>
   
 {% endblock container %}

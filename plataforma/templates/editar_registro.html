@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Registro{% endblock title %}
+
+{% block container %}
+  <div class="container mt-4">
+    <h1>Editar Registro</h1>
+    <form action="{% url 'editar_registro' registro.id %}" method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="nome">Nome:</label>
+          <select class="form-select" id="nome" name="nome">
+            {% for nome in nomes %}
+              <option value="{{ nome.id }}" {% if nome.id == registro.nome.id %}selected{% endif %}>{{ nome.nome }}</option>
+            {% endfor %}
+          </select><br>
+        </fieldset>
+      </div>
+      
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="orgao_setor">Orgão/Setor:</label>
+          <select class="form-select" id="orgao_setor" name="orgao_setor">
+            {% for setor in setores %}
+              <option value="{{ setor.id }}" {% if setor.id == registro.orgao_setor.id %}selected{% endif %}>{{ setor.orgao_setor }}</option>
+            {% endfor %}
+          </select><br>
+        </fieldset>
+      </div>
+      
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="municipio">Município:</label>
+          <select class="form-select" id="municipio" name="municipio">
+            {% for municipio in municipios %}
+              <option value="{{ municipio.id }}" {% if municipio.id == registro.municipio.id %}selected{% endif %}>{{ municipio.municipio }}</option>
+            {% endfor %}
+          </select><br>
+        </fieldset>
+      </div>
+
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="atividade">Atividade:</label>
+          <select class="form-select" id="atividade" name="atividade">
+            {% for atividade in atividades %}
+              <option value="{{ atividade.id }}" {% if atividade.id == registro.atividade.id %}selected{% endif %}>{{ atividade.atividade }}</option>
+            {% endfor %}
+          </select><br>
+        </fieldset>
+      </div>
+
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="num_convenio">Nº do Convênio:</label>
+          <input class="form-control" type="text" placeholder="Nº do Convênio" name="num_convenio" required><br>
+        </fieldset>
+      </div>
+
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="parlamentar">Parlamentar:</label>
+          <input class="form-control" type="text" placeholder="Parlamentar" name="parlamentar" required><br>
+        </fieldset>
+      </div>
+
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="objeto">Objeto:</label>
+          <input class="form-control" type="text" placeholder="Objeto" name="objeto" required><br>
+        </fieldset>
+      </div>
+
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="oge_ogu">OGE/OGU:</label>
+          <input class="form-control" type="text" placeholder="OGE/OGU" name="oge_ogu" id="oge_ogu" required><br>
+        </fieldset>
+      </div>
+
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="cp_prefeitura">CP Prefeitura:</label>
+          <input class="form-control" type="text" placeholder="CP Prefeitura" name="cp_prefeitura" id="cp_prefeitura" required><br>
+        </fieldset>
+      </div>
+
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="valor_liberado">Valor Liberado:</label>
+          <input class="form-control" type="text" placeholder="Valor Liberado" name="valor_liberado" id="valor_liberado" required><br>
+        </fieldset>
+      </div>
+
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="prazo_vigencia">Prazo de Vigência:</label>
+          <input class="form-control" type="date" name="prazo_vigencia" required><br>
+        </fieldset>
+      </div>
+
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="situacao">Situação:</label>
+          <input class="form-control" type="text" placeholder="Situação" name="situacao" required><br>
+        </fieldset>
+      </div>
+
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="providencia">Providência:</label>
+          <input class="form-control" type="text" placeholder="Providência" name="providencia" required><br>
+        </fieldset>
+      </div>
+
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="data_recepcao">Data de Recepção:</label>
+          <input class="form-control" type="date" placeholder="Data de Recepção..." name="data_recepcao" required><br>
+        </fieldset>
+      </div>
+
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="data_inicio">Data de Início:</label>
+          <input class="form-control" type="date" placeholder="Data de Início..." name="data_inicio"><br>
+        </fieldset>
+      </div>
+
+      <div class="form-group">
+        <fieldset class="form-group">
+          <legend class="mt-4">Documento Pendente:</legend>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="documento_pendente_{{ forloop.counter }}" name="documento_pendente" value="true" {% if registro.documento_pendente %}checked{% endif %}>
+            <label class="form-check-label" for="documento_pendente_{{ forloop.counter }}">{{ registro.documento_pendente|yesno:"Não,Sim" }}</label>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="form-group">
+        <fieldset class="form-group">
+          <legend class="mt-4">Documento Cancelado:</legend>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="documento_cancelado_{{ forloop.counter }}" name="documento_cancelado" value="true" {% if registro.documento_cancelado %}checked{% endif %}>
+            <label class="form-check-label" for="documento_cancelado_{{ forloop.counter }}">{{ registro.documento_cancelado|yesno:"Não,Sim" }}</label>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="data_fim">Data do Fim:</label>
+          <input class="form-control" type="date" placeholder="Data do Fim..." name="data_fim"><br>
+        </fieldset>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+      <br>
+    </form>
+    <br>
+    <script>
+      // Mantenha o script de formatação do campo monetário aqui
+      // Adiciona a máscara ao campo de entrada
+      VMasker(document.getElementById("oge_ogu")).maskMoney({
+        precision: 2,
+        separator: ',',
+        delimiter: '.',
+        unit: 'R$ ',
+        zeroCents: false, // Impede a exibição de centavos se eles forem zero
+      });
+
+      VMasker(document.getElementById("cp_prefeitura")).maskMoney({
+        precision: 2,
+        separator: ',',
+        delimiter: '.',
+        unit: 'R$',
+        zeroCents: false,
+      })
+
+      VMasker(document.getElementById("valor_liberado")).maskMoney({
+        precision: 2,
+        separator: ',',
+        delimiter: '.',
+        unit: 'R$',
+        zeroCents: false,
+      })
+    
+      // Adiciona um evento para formatar o valor quando o foco é perdido
+      document.getElementById("oge_ogu").addEventListener("blur", function() {
+        // Remove a máscara e formata o número usando Intl.NumberFormat
+        let unmaskedValue = VMasker.toNumber(this.value);
+        let formattedValue = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(unmaskedValue / 100);
+    
+        // Define o valor formatado de volta ao campo
+        this.value = formattedValue;
+      });
+
+      document.getElementById("cp_prefeitura").addEventListener("blur", function() {
+        // Remove a máscara e formata o número usando Intl.NumberFormat
+        let unmaskedValue = VMasker.toNumber(this.value);
+        let formattedValue = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(unmaskedValue / 100);
+    
+        // Define o valor formatado de volta ao campo
+        this.value = formattedValue;
+      });
+
+      document.getElementById("valor_liberado").addEventListener("blur", function() {
+        // Remove a máscara e formata o número usando Intl.NumberFormat
+        let unmaskedValue = VMasker.toNumber(this.value);
+        let formattedValue = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(unmaskedValue / 100);
+    
+        // Define o valor formatado de volta ao campo
+        this.value = formattedValue;
+      });
+
+    </script>
+  </div>
+{% endblock container %}

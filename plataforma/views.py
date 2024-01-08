@@ -1,6 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.messages import constants
 from .models import RegistroFuncionarios, Nome, Setor, Municipio, Atividade, Status
 from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
 import locale
@@ -55,9 +56,24 @@ def adicionar_registro(request):
         num_convenio = request.POST.get('num_convenio')
         parlamentar = request.POST.get('parlamentar')
         objeto = request.POST.get('objeto')
-        oge_ogu = float(request.POST.get('oge_ogu'))
-        cp_prefeitura = float(request.POST.get('cp_prefeitura'))
-        valor_liberado = float(request.POST.get('valor_liberado'))
+
+        # Configure a localidade para o formato brasileiro
+        locale.setlocale(locale.LC_NUMERIC, 'pt_BR.UTF-8')
+
+        # Remova caracteres não numéricos da string e converta para float
+        oge_ogu_str = request.POST.get('oge_ogu')
+        oge_ogu_limpo = ''.join(c for c in oge_ogu_str if c.isdigit() or c == '.' or c == ',')
+        oge_ogu = locale.atof(oge_ogu_limpo)
+
+        # Repita o processo para outros campos que podem ter formato monetário
+        cp_prefeitura_str = request.POST.get('cp_prefeitura')
+        cp_prefeitura_limpo = ''.join(c for c in cp_prefeitura_str if c.isdigit() or c == '.' or c == ',')
+        cp_prefeitura = locale.atof(cp_prefeitura_limpo)
+
+        valor_liberado_str = request.POST.get('valor_liberado')
+        valor_liberado_limpo = ''.join(c for c in valor_liberado_str if c.isdigit() or c == '.' or c == ',')
+        valor_liberado = locale.atof(valor_liberado_limpo)
+        
         prazo_vigencia = request.POST.get('prazo_vigencia')
         situacao = request.POST.get('situacao')
         providencia = request.POST.get('providencia')
@@ -128,3 +144,83 @@ def visualizar_tabela(request):
     registros = RegistroFuncionarios.objects.all()
 
     return render(request, 'visualizar_tabela.html', {'registros': registros})
+
+def editar_registro(request, registro_id):
+    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+
+    # Obtenha a instância do registro a ser editado
+    registro = get_object_or_404(RegistroFuncionarios, id=registro_id)
+
+    if request.method == 'POST':
+        # Atualize os campos do registro com os dados do POST
+        registro.nome = Nome.objects.get(id=request.POST.get('nome'))
+        registro.orgao_setor = Setor.objects.get(id=request.POST.get('orgao_setor'))
+        registro.municipio = Municipio.objects.get(id=request.POST.get('municipio'))
+        registro.atividade = Atividade.objects.get(id=request.POST.get('atividade'))
+        registro.num_convenio = request.POST.get('num_convenio')
+        registro.parlamentar = request.POST.get('parlamentar')
+        registro.objeto = request.POST.get('objeto')
+
+        # Configure a localidade para o formato brasileiro
+        locale.setlocale(locale.LC_NUMERIC, 'pt_BR.UTF-8')
+
+        # Remova caracteres não numéricos da string e converta para float
+        oge_ogu_str = request.POST.get('oge_ogu')
+        oge_ogu_limpo = ''.join(c for c in oge_ogu_str if c.isdigit() or c == '.' or c == ',')
+        registro.oge_ogu = locale.atof(oge_ogu_limpo)
+
+        # Repita o processo para os outros campos que podem ter formato monetário
+        cp_prefeitura_str = request.POST.get('cp_prefeitura')
+        cp_prefeitura_limpo = ''.join(c for c in cp_prefeitura_str if c.isdigit() or c == '.' or c == ',')
+        registro.cp_prefeitura = locale.atof(cp_prefeitura_limpo)
+
+        valor_liberado_str = request.POST.get('valor_liberado')
+        valor_liberado_limpo = ''.join(c for c in valor_liberado_str if c.isdigit() or c == '.' or c == ',')
+        registro.valor_liberado = locale.atof(valor_liberado_limpo)
+
+        registro.prazo_vigencia = request.POST.get('prazo_vigencia')
+        registro.situacao = request.POST.get('situacao')
+        registro.providencia = request.POST.get('providencia')
+        registro.data_recepcao = request.POST.get('data_recepcao')
+        registro.data_inicio = request.POST.get('data_inicio')
+        registro.documento_pendente = 'documento_pendente' in request.POST
+        registro.documento_cancelado = 'documento_cancelado' in request.POST
+        registro.data_fim = request.POST.get('data_fim')
+
+        # Salve o registro
+        registro.save()
+
+        # Chame as funções utilitárias
+        registro.valor_total, registro.falta_liberar = calcular_valores(registro)
+        exibir_modal, dias_restantes = exibir_modal_prazo_vigencia(registro)
+        registro.duracao_dias_uteis = dia_trabalho_total(registro.data_inicio, registro.data_fim)
+
+        # Formate os valores usando a localidade definida
+        registro.oge_ogu = locale.currency(registro.oge_ogu, grouping=True)
+        registro.cp_prefeitura = locale.currency(registro.cp_prefeitura, grouping=True)
+        registro.valor_liberado = locale.currency(registro.valor_liberado, grouping=True)
+        registro.valor_total = locale.currency(registro.valor_total, grouping=True)
+        registro.falta_liberar = locale.currency(registro.falta_liberar, grouping=True)
+        
+        messages.add_message(request, constants.SUCCESS, 'Registro editado com sucesso.')
+        messages.success(request, 'Registro editado com sucesso.')
+        return redirect('home')
+    
+    # Recupere as opções para os campos estrangeiros...
+    nomes = Nome.objects.all()
+    setores = Setor.objects.all()
+    municipios = Municipio.objects.all()
+    atividades = Atividade.objects.all()
+    registros = RegistroFuncionarios.objects.all()
+
+    context = {
+        'registro': registro,
+        'nomes': nomes,
+        'setores': setores,
+        'municipios': municipios,
+        'atividades': atividades,
+        'messages': messages.get_messages(request),
+        'registros': registros,
+    }
+
+    return render(request, 'editar_registro.html', context)

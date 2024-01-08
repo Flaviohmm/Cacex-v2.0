@@ -44,6 +44,7 @@
                     <th scope="col">DOCUMENTO CANCELADO</th>
                     <th scope="col">DATA DO FIM</th>
                     <th scope="col">DURAÇÃO DE DIAS ÚTEIS</th>
+                    <th scope="col">VER DETALHES</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -83,66 +84,60 @@
                         {% endif %}
                       </td>
                       <td>{{ registro.dia_trabalho_total }}</td>
-                    </tr>
-                    <!-- Modal -->
-                    {% comment %} {% with dias_restantes=registro.exibir_modal_prazo_vigencia.1 %}
-                      {% if dias_restantes <= 30 %}
-                        <div class="modal" id="notificationModal{{ registro.id }}" tabindex="-1" aria-labelledby="notificationModalLabel{{ registro.id }}" aria-hidden="true">
+                      <td>
+                        
+                        <!-- Botão para acionar o modal -->
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detalhesModal{{ registro.id }}">
+                          Detalhes
+                        </button>
+                  
+                        <!-- Modal -->
+                        <div class="modal fade" id="detalhesModal{{ registro.id }}" tabindex="-1" role="dialog" aria-labelledby="detalhesModalLabel{{ registro.id }}" aria-hidden="true">
                           <div class="modal-dialog" role="document">
                             <div class="modal-content">
                               <div class="modal-header">
-                                <h5 class="modal-title" id="notificationModalLabel{{ registro.id }}">Notificação de Prazo</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="customCloseButton">
+                                <h5 class="modal-title" id="detalhesModalLabel{{ registro.id }}">Detalhes do Registro</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" data-custom-close-button="{{ registro.id }}">
                                   <span aria-hidden="true"></span>
                                 </button>
                               </div>
                               <div class="modal-body">
-                                <p>O convênio {{ registro.num_convenio }} está com o prazo de vigência próximo do seu vencimento. Restam {{ dias_restantes }} dias.</p>
+                                <!-- Conteúdo do modal com os detalhes do registro -->
+                                <p><strong>Nome:</strong> {{ registro.nome.nome }}</p>
+                                <p><strong>Orgão/Setor:</strong> {{ registro.orgao_setor.orgao_setor }}</p>
+                                <p><strong>Município:</strong> {{ registro.municipio.municipio }}</p>
+                                <p><strong>Atividade:</strong> {{ registro.atividade.atividade }}</p>
+
+                                <p><strong>Nº do Convênio:</strong> {{ registro.num_convenio }}</p>
+                                <p><strong>Parlamentar:</strong> {{ registro.parlamentar }}</p>
+                                <p><strong>Objeto:</strong> {{ registro.objeto }}</p>
+                                <p><strong>OGE/OGU:</strong> {{ registro.oge_ogu|format_currency }}</p>
+                                <p><strong>CP Prefeitura:</strong> {{ registro.cp_prefeitura|format_currency }}</p>
+                                <p><strong>Valor Total:</strong> {{ registro.calcular_valores.0|format_currency }}</p>
+
+                                <p><strong>Valor Liberado:</strong> {{ registro.valor_liberado|format_currency }}</p>
+                                <p><strong>Falta Liberar:</strong> {{ registro.calcular_valores.1|format_currency }}</p>
+                                <p><strong>Prazo de Vigência:</strong> {{ registro.prazo_vigencia }}</p>
+                                <p><strong>Situação:</strong> {{ registro.situacao }}</p>
+                                <p><strong>Providência:</strong> {{ registro.providencia }}</p>
+
+                                <p><strong>Status:</strong> {{ registro.status }}</p>
+                                <p><strong>Data de Recepção:</strong> {{ registro.data_recepcao }}</p>
+                                <p><strong>Data de Término:</strong> {% if registro.data_inicio %}{{ registro.data_inicio }}{% else %}Sem data de término{% endif %}</p>
+                                
+                                <p><strong>Data de Término:</strong> {% if registro.data_fim %}{{ registro.data_fim }}{% else %}Sem data de término{% endif %}</p>
+                                <p><strong>Dias de Trabalho Total:</strong> {{ registro.dia_trabalho_total }}</p>
                               </div>
                               <div class="modal-footer">
-                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-next-modal="{{ registro.next_modal }}">Next</button>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="customCloseButton">Close</button>
+                                <!-- Botão para acionar a página de edição do registro -->
+                                <a href="{% url 'editar_registro' registro.id %}" class="btn btn-primary">Editar Registro</a>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
                               </div>
                             </div>
                           </div>
                         </div>
-
-                        <!-- Scripts -->
-                        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-                        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-                        <script>
-                          function removeModalBackdrop() {
-                            // Adiciona um ouvinte para o evento 'hidden.bs.modal' antes de remover o backdrop
-                            $('.modal').on('hidden.bs.modal', function () {
-                              $(this).next('.modal-backdrop').remove();
-                            });
-                          }
-                          
-                          $(document).ready(function () {
-                            // Inicializa todos os modais com id começando por "notificationModal"
-                            $('[id^=notificationModal]').modal('show');
-                          
-                            // Adiciona evento para quando o modal for totalmente fechado
-                            $('body').on('hidden.bs.modal', '.modal', function () {
-                              // Obtém o ID do próximo modal a ser exibido
-                              var nextModalId = $(this).find('[data-next-modal]').data('next-modal');
-                          
-                              // Verifica se há um próximo modal e o exibe
-                              if (nextModalId) {
-                                $('#' + nextModalId).modal('show');
-                              }
-                            });
-                          
-                            // Adiciona evento ao botão "Close" para chamar a função de remoção do backdrop
-                            $('#customCloseButton').on('click', function () {
-                              // Oculta o modal antes de remover o backdrop
-                              $('[id^=notificationModal]').modal('hide');
-                              removeModalBackdrop();
-                            });
-                          });
-                        </script>
-                      {% endif %}
-                    {% endwith %} {% endcomment %}
+                      </td>
+                    </tr>
                   {% endfor %}
                 </tbody>
               </table>
@@ -159,5 +154,9 @@
     </div>
   </div> 
   
+  <!-- Inclua o jQuery primeiro -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Em seguida, inclua o Bootstrap JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   
 {% endblock container %}

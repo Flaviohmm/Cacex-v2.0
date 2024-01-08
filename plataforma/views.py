@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import RegistroFuncionarios, Nome, Setor, Municipio, Atividade, Status
 from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
+import locale
 
 
 @login_required(login_url='/auth/login')
@@ -43,6 +44,9 @@ def adicionar_atividade(request):
     return render(request, 'adicionar_atividade.html')
 
 def adicionar_registro(request):
+    # Defina a localidade para o formato brasileiro
+    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+
     if request.method == 'POST':
         nome = Nome.objects.get(id=request.POST.get('nome'))
         orgao_setor = Setor.objects.get(id=request.POST.get('orgao_setor'))
@@ -51,9 +55,9 @@ def adicionar_registro(request):
         num_convenio = request.POST.get('num_convenio')
         parlamentar = request.POST.get('parlamentar')
         objeto = request.POST.get('objeto')
-        oge_ogu = request.POST.get('oge_ogu')
-        cp_prefeitura = request.POST.get('cp_prefeitura')
-        valor_liberado = request.POST.get('valor_liberado')
+        oge_ogu = float(request.POST.get('oge_ogu'))
+        cp_prefeitura = float(request.POST.get('cp_prefeitura'))
+        valor_liberado = float(request.POST.get('valor_liberado'))
         prazo_vigencia = request.POST.get('prazo_vigencia')
         situacao = request.POST.get('situacao')
         providencia = request.POST.get('providencia')
@@ -93,9 +97,12 @@ def adicionar_registro(request):
         exibir_modal, dias_restantes = exibir_modal_prazo_vigencia(registro)
         registro.duracao_dias_uteis = dia_trabalho_total(registro.data_inicio, registro.data_fim)
 
-        # Adicione a mensagem para notificação
-        # if exibir_modal:
-        #     messages.info(request, f'O convênio {registro.num_convenio} está com prazo de vigência proximo do seu vencimento. Restam {dias_restantes} dias.')
+        # Formate os valores usando a localidade definida
+        registro.oge_ogu = locale.currency(oge_ogu, grouping=True)
+        registro.cp_prefeitura = locale.currency(cp_prefeitura, grouping=True)
+        registro.valor_liberado = locale.currency(valor_liberado, grouping=True)
+        registro.valor_total = locale.currency(registro.valor_total, grouping=True)
+        registro.falta_liberar = locale.currency(registro.falta_liberar, grouping=True)
 
         return redirect('home')
     

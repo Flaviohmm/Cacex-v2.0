@@ -4,6 +4,8 @@
 
 {% load humanize %}
 
+{% load custom_filters %}
+
 {% block header %}{% endblock header %}
 
 {% block container %}
@@ -15,13 +17,6 @@
           <i class="fa-solid fa-list fa-lg"></i> Registro de Atividades dos Funcionários
         </div>
         <div class="card-body">
-          {% if messages %}
-            <ul class="messages">
-              {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-              {% endfor %}
-            </ul>  
-          {% endif %}
           <p class="card-text">
             <div class="table-responsive">
               <table class='table table-hover'>
@@ -61,11 +56,11 @@
                       <td>{{ registro.num_convenio }}</td>
                       <td>{{ registro.parlamentar }}</td>
                       <td>{{ registro.objeto }}</td>
-                      <td>R$ {{ registro.oge_ogu|floatformat:2|intword }}</td>                    
-                      <td>R$ {{ registro.cp_prefeitura|floatformat:2|intword }}</td>
-                      <td>R$ {{ registro.calcular_valores.0|floatformat:2|intword }}</td>
-                      <td>R$ {{ registro.valor_liberado|floatformat:2|intword }}</td>
-                      <td>R$ {{ registro.calcular_valores.1|floatformat:2|intword }}</td>
+                      <td>{{ registro.oge_ogu|format_currency }}</td>
+                      <td>{{ registro.cp_prefeitura|format_currency }}</td>
+                      <td>{{ registro.calcular_valores.0|format_currency }}</td>
+                      <td>{{ registro.valor_liberado|format_currency }}</td>
+                      <td>{{ registro.calcular_valores.1|format_currency }}</td>
                       <td>{{ registro.prazo_vigencia }}</td>
                       <td>{{ registro.situacao }}</td>
                       <td>{{ registro.providencia }}</td>

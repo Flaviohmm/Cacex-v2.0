@@ -68,19 +68,19 @@
       <div class="form-group">
         <fieldset>
           <label class="form-label mt-4" for="oge_ogu">OGE/OGU:</label>
-          <input class="form-control" type="text" placeholder="OGE/OGU" name="oge_ogu" required><br>
+          <input class="form-control" type="text" placeholder="OGE/OGU" name="oge_ogu" id="oge_ogu" required><br>
         </fieldset>
       </div>
       <div class="form-group">
         <fieldset>
           <label class="form-label mt-4" for="cp_prefeitura">CP Prefeitura:</label>
-          <input class="form-control" type="text" placeholder="CP Prefeitura" name="cp_prefeitura" required><br>
+          <input class="form-control" type="text" placeholder="CP Prefeitura" name="cp_prefeitura" id="cp_prefeitura" required><br>
         </fieldset>
       </div>
       <div class="form-group">
         <fieldset>
           <label class="form-label mt-4" for="valor_liberado">Valor Liberado:</label>
-          <input class="form-control" type="text" placeholder="Valor Liberado" name="valor_liberado" required><br>
+          <input class="form-control" type="text" placeholder="Valor Liberado" name="valor_liberado" id="valor_liberado" required><br>
         </fieldset>
       </div>
       <div class="form-group">
@@ -141,5 +141,59 @@
       <br>
     </form>
     <br>
+    <script>
+      // Adiciona a máscara ao campo de entrada
+      VMasker(document.getElementById("oge_ogu")).maskMoney({
+        precision: 2,
+        separator: ',',
+        delimiter: '.',
+        unit: 'R$ ',
+        zeroCents: false, // Impede a exibição de centavos se eles forem zero
+      });
+
+      VMasker(document.getElementById("cp_prefeitura")).maskMoney({
+        precision: 2,
+        separator: ',',
+        delimiter: '.',
+        unit: 'R$',
+        zeroCents: false,
+      })
+
+      VMasker(document.getElementById("valor_liberado")).maskMoney({
+        precision: 2,
+        separator: ',',
+        delimiter: '.',
+        unit: 'R$',
+        zeroCents: false,
+      })
+    
+      // Adiciona um evento para formatar o valor quando o foco é perdido
+      document.getElementById("oge_ogu").addEventListener("blur", function() {
+        // Remove a máscara e formata o número usando Intl.NumberFormat
+        let unmaskedValue = VMasker.toNumber(this.value);
+        let formattedValue = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(unmaskedValue / 100);
+    
+        // Define o valor formatado de volta ao campo
+        this.value = formattedValue;
+      });
+
+      document.getElementById("cp_prefeitura").addEventListener("blur", function() {
+        // Remove a máscara e formata o número usando Intl.NumberFormat
+        let unmaskedValue = VMasker.toNumber(this.value);
+        let formattedValue = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(unmaskedValue / 100);
+    
+        // Define o valor formatado de volta ao campo
+        this.value = formattedValue;
+      });
+
+      document.getElementById("valor_liberado").addEventListener("blur", function() {
+        // Remove a máscara e formata o número usando Intl.NumberFormat
+        let unmaskedValue = VMasker.toNumber(this.value);
+        let formattedValue = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(unmaskedValue / 100);
+    
+        // Define o valor formatado de volta ao campo
+        this.value = formattedValue;
+      });
+    </script>
   </div>
 {% endblock container %}

@@ -73,7 +73,7 @@ def adicionar_registro(request):
         valor_liberado_str = request.POST.get('valor_liberado')
         valor_liberado_limpo = ''.join(c for c in valor_liberado_str if c.isdigit() or c == '.' or c == ',')
         valor_liberado = locale.atof(valor_liberado_limpo)
-        
+
         prazo_vigencia = request.POST.get('prazo_vigencia')
         situacao = request.POST.get('situacao')
         providencia = request.POST.get('providencia')
@@ -224,3 +224,19 @@ def editar_registro(request, registro_id):
     }
 
     return render(request, 'editar_registro.html', context)
+
+def excluir_registro(request, registro_id):
+    try:
+        # Busque o registro pelo ID
+        registro = RegistroFuncionarios.objects.get(id=registro_id)
+
+        # Exclua o registro
+        registro.delete()
+
+        messages.success(request, 'Registro excluido com sucesso.')
+    except RegistroFuncionarios.DoesNotExist:
+        messages.error(request, 'Registro não encontrado.')
+    except Exception as e:
+        messages.error(request, f'Ocorreu um erro ao excluir o registro: {e}')
+
+    return redirect('home')

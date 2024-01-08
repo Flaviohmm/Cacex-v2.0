@@ -11,4 +11,5 @@ urlpatterns = [
     path('adicionar_atividade/', views.adicionar_atividade, name='adicionar_atividade'),
     path('visualizar_tabela/', views.visualizar_tabela, name='visualizar_tabela'),
     path('editar_registro/<int:registro_id>/', views.editar_registro, name='editar_registro'),
+    path('excluir_registros/<int:registro_id>/', views.excluir_registro, name='excluir_registro'),
 ]

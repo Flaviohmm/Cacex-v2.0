@@ -131,7 +131,12 @@
                               <div class="modal-footer">
                                 <!-- Botão para acionar a página de edição do registro -->
                                 <a href="{% url 'editar_registro' registro.id %}" class="btn btn-primary">Editar Registro</a>
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                <!-- Adicione o botão "Excluir Registro" com um formulário de confirmação -->
+                                <form method="post" action="{% url 'excluir_registro' registro.id %}" class="d-inline">
+                                  {% csrf_token %}
+                                  <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir o registro?')">Excluir Registro</button>
+                                </form>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close" data-custom-close-button="{{ registro.id }}">Fechar</button>
                               </div>
                             </div>
                           </div>

@@ -5,12 +5,28 @@ from django.contrib.messages import constants
 from .models import RegistroFuncionarios, Nome, Setor, Municipio, Atividade, Status
 from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
 import locale
+import logging
 
 
 @login_required(login_url='/auth/login')
 def home(request):
+    # Recupere dados para as listas suspensas
+    nomes = Nome.objects.all()
+    orgaos_setores = Setor.objects.all()
+    municipios = Municipio.objects.all()
+
+    # Recupere todos os registros
     registros = RegistroFuncionarios.objects.all()
-    return render(request, 'home.html', {'registros': registros})
+    
+    # Crie o contexto com os dados
+    context = {
+        'nomes': nomes,
+        'orgaos_setores': orgaos_setores,
+        'municipios': municipios,
+        'registros': registros,
+    }
+
+    return render(request, 'home.html', context)
 
 def adicionar_nome(request):
     if request.method == 'POST':
@@ -141,9 +157,24 @@ def adicionar_registro(request):
     return render(request, 'adicionar_registro.html', context)
 
 def visualizar_tabela(request):
+    # Recupere dados para as listas suspensas
+    nomes = Nome.objects.all()
+    orgaos_setores = Setor.objects.all()
+    municipios = Municipio.objects.all()
+
+    # Recupere todos os registros
     registros = RegistroFuncionarios.objects.all()
 
-    return render(request, 'visualizar_tabela.html', {'registros': registros})
+    # Crie o contexto com os dados
+    context = {
+        'nomes': nomes,
+        'orgaos_setores': orgaos_setores,
+        'municipios': municipios,
+        'registros': registros,
+    }
+
+    # Renderize o modelo com o contexto
+    return render(request, 'visualizar_tabela.html', context)
 
 def editar_registro(request, registro_id):
     locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
@@ -240,3 +271,49 @@ def excluir_registro(request, registro_id):
         messages.error(request, f'Ocorreu um erro ao excluir o registro: {e}')
 
     return redirect('home')
+
+def tabela_filtrada(request):
+    nomes = Nome.objects.all()
+    orgaos_setores = Setor.objects.all()
+    municipios = Municipio.objects.all()
+
+    nome_id = request.GET.get('nome')
+    orgao_setor_id = request.GET.get('orgao_setor')
+    municipio_id = request.GET.get('municipio')
+    num_convenio = request.GET.get('num_convenio')
+    parlamentar = request.GET.get('parlamentar')
+    prazo_vigencia = request.GET.get('prazo_vigencia')
+    status = request.GET.get('status')
+
+    registros_filtrados = RegistroFuncionarios.objects.all()
+
+    if nome_id:
+        registros_filtrados = registros_filtrados.filter(nome__id=nome_id)
+    
+    if orgao_setor_id:
+        registros_filtrados = registros_filtrados.filter(orgao_setor__id=orgao_setor_id)
+
+    if municipio_id:
+        registros_filtrados = registros_filtrados.filter(municipio__id=municipio_id)
+
+    if num_convenio:
+        registros_filtrados = registros_filtrados.filter(num_convenio__icontains=num_convenio)
+
+    if parlamentar:
+        registros_filtrados = registros_filtrados.filter(parlamentar__icontains=parlamentar)
+
+    if prazo_vigencia:
+        registros_filtrados = registros_filtrados.filter(prazo_vigencia__icontains=prazo_vigencia)
+
+    if status:
+        registros_filtrados = registros_filtrados.filter(status__icontains=status)
+
+    context = {
+        'nomes': nomes,
+        'orgaos_setores': orgaos_setores,
+        'municipios': municipios,
+        'registros_filtrados': registros_filtrados,
+    }
+
+    return render(request, 'tabela_filtrada.html', context)
+

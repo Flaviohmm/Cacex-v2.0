@@ -9,6 +9,31 @@
 {% block header %}{% endblock header %}
 
 {% block container %}
+  <style>
+    .table-container {
+      overflow: auto;
+      max-height: 650px; /* Ajuste conforme necessário para o tamanho desejado */
+    }
+  
+    .table-fixed {
+      width: auto;
+    }
+  
+    .thead-fixed th {
+      position: sticky;
+      top: 0;
+      background-color: #fff; /* Cor de fundo desejada */
+      z-index: 1;
+    }
+  
+    .col-fixed {
+      position: sticky;
+      left: 0;
+      background-color: #fff; /* Cor de fundo desejada */
+      z-index: 1;
+    }
+  </style>
+
   <h3 class="m-4">Descrição de Atividades</h3>
   <button type="button" class="btn btn-primary m-4" data-bs-toggle="modal" data-bs-target="#filtroModal">
     Filtrar
@@ -103,33 +128,33 @@
         </div>
         <div class="card-body">
           <p class="card-text">
-            <div class="table-responsive">
+            <div class="table-container table-responsive">
               <table class='table table-hover'>
-                <thead>
+                <thead class="thead-fixed sticky-top">
                   <tr>
-                    <th scope="col">NOME</th>
-                    <th scope="col">ORGÃO/SETOR</th>
-                    <th scope="col">MUNICÍPIO</th>
-                    <th scope="col">ATIVIDADE</th>
-                    <th scope="col">Nº CONVÊNIO</th>
-                    <th scope="col">PARLAMENTAR</th>
-                    <th scope="col">OBJETO</th>
-                    <th scope="col">OGE/OGU</th>
-                    <th scope="col">CP-PREFEITURA</th>
-                    <th scope="col">VALOR TOTAL</th>
-                    <th scope="col">VALOR LIBERADO</th>
-                    <th scope="col">FALTA LIBERAR</th>
-                    <th scope="col">PRAZO DE VIGÊNCIA</th>
-                    <th scope="col">SITUAÇÃO</th>
-                    <th scope="col">PROVIDÊNCIA</th>
-                    <th scope="col">STATUS</th>
-                    <th scope="col">DATA DE RECEPÇÃO</th>
-                    <th scope="col">DATA DE ÍNICIO</th>
-                    <th scope="col">DOCUMENTO PENDENTE</th>
-                    <th scope="col">DOCUMENTO CANCELADO</th>
-                    <th scope="col">DATA DO FIM</th>
-                    <th scope="col">DURAÇÃO DE DIAS ÚTEIS</th>
-                    <th scope="col">VER DETALHES</th>
+                    <th scope="col-fixed">NOME</th>
+                    <th scope="col-fixed">ORGÃO/SETOR</th>
+                    <th scope="col-fixed">MUNICÍPIO</th>
+                    <th scope="col-fixed">ATIVIDADE</th>
+                    <th scope="col-fixed">Nº CONVÊNIO</th>
+                    <th scope="col-fixed">PARLAMENTAR</th>
+                    <th scope="col-fixed">OBJETO</th>
+                    <th scope="col-fixed">OGE/OGU</th>
+                    <th scope="col-fixed">CP-PREFEITURA</th>
+                    <th scope="col-fixed">VALOR TOTAL</th>
+                    <th scope="col-fixed">VALOR LIBERADO</th>
+                    <th scope="col-fixed">FALTA LIBERAR</th>
+                    <th scope="col-fixed">PRAZO DE VIGÊNCIA</th>
+                    <th scope="col-fixed">SITUAÇÃO</th>
+                    <th scope="col-fixed">PROVIDÊNCIA</th>
+                    <th scope="col-fixed">STATUS</th>
+                    <th scope="col-fixed">DATA DE RECEPÇÃO</th>
+                    <th scope="col-fixed">DATA DE ÍNICIO</th>
+                    <th scope="col-fixed">DOCUMENTO PENDENTE</th>
+                    <th scope="col-fixed">DOCUMENTO CANCELADO</th>
+                    <th scope="col-fixed">DATA DO FIM</th>
+                    <th scope="col-fixed">DURAÇÃO DE DIAS ÚTEIS</th>
+                    <th scope="col-fixed">VER DETALHES</th>  
                   </tr>
                 </thead>
                 <tbody>
@@ -244,6 +269,19 @@
       </div>
     </div>
   </div> 
+
+  <script>
+    $(document).ready(function () {
+      var tableContainer = $('.table-container');
+  
+      // Adicione uma função de rolagem ao contêiner da tabela
+      tableContainer.scroll(function () {
+        var leftOffset = tableContainer.scrollLeft();
+        $('.col-fixed').css('left', leftOffset);
+      });
+    });
+  </script>
+
   
   <!-- Inclua o jQuery primeiro -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

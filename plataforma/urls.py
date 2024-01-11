@@ -13,4 +13,5 @@ urlpatterns = [
     path('tabela_filtrada/', views.tabela_filtrada, name='tabela_filtrada'),
     path('editar_registro/<int:registro_id>/', views.editar_registro, name='editar_registro'),
     path('excluir_registros/<int:registro_id>/', views.excluir_registro, name='excluir_registro'),
+    path('historico/', views.historico, name='historico'),
 ]

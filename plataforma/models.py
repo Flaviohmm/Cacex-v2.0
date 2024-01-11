@@ -1,9 +1,12 @@
 from django.core.exceptions import ValidationError
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.utils import timezone
 from decimal import Decimal
 from datetime import datetime, timedelta
+from autenticar.models import CustomUser
 import numpy as np
+import json
 
 
 class Nome(models.Model):
@@ -147,3 +150,22 @@ class RegistroFuncionarios(models.Model):
             f"{self.status} | {self.data_recepcao} | {self.data_inicio} | {self.documento_pendente} | "
             f"{self.documento_cancelado} | {self.data_fim} | {self.duracao_dias_uteis}"
         )
+
+class DecimalJSONEncoder(DjangoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return float(obj)
+        elif callable(obj):
+            # Se obj for uma função/método, converta para uma string representativa
+            return f"{obj.__module__}.{obj.__name__}"
+        return super().default(obj)
+
+class Historico(models.Model):
+    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    acao = models.CharField(max_length=255)
+    data = models.DateTimeField(auto_now_add=True)
+    dados_anteriores = models.JSONField(default=dict, encoder=DecimalJSONEncoder)
+    registro = models.ForeignKey(RegistroFuncionarios, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.usuario} - {self.acao} em {self.data}'

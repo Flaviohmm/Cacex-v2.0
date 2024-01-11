@@ -2,10 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.messages import constants
-from .models import RegistroFuncionarios, Nome, Setor, Municipio, Atividade, Status
+from django.utils import timezone
+from .models import RegistroFuncionarios, Nome, Setor, Municipio, Atividade, Historico
 from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
 import locale
-import logging
+import json
 
 
 @login_required(login_url='/auth/login')
@@ -182,6 +183,36 @@ def editar_registro(request, registro_id):
     # Obtenha a instância do registro a ser editado
     registro = get_object_or_404(RegistroFuncionarios, id=registro_id)
 
+    # Chame as funções utilitárias
+    registro.valor_total, registro.falta_liberar = calcular_valores(registro)
+    exibir_modal, dias_restantes = exibir_modal_prazo_vigencia(registro)
+    registro.duracao_dias_uteis = dia_trabalho_total(registro.data_inicio, registro.data_fim)
+
+    # Obtenha os dados anteriores fora do bloco condicional
+    dados_anteriores = {
+        'nome': registro.nome.nome,
+        'orgao_setor': registro.orgao_setor.orgao_setor,
+        'municipio': registro.municipio.municipio,
+        'atividade': registro.atividade.atividade,
+        'num_convenio': registro.num_convenio,
+        'parlamentar': registro.parlamentar,
+        'objeto': registro.objeto,
+        'oge_ogu': registro.oge_ogu,
+        'cp_prefeitura': registro.cp_prefeitura,
+        'valor_total': registro.valor_total,
+        'valor_liberado': registro.valor_liberado,
+        'falta_liberar': registro.falta_liberar,
+        'prazo_de_vigencia': registro.prazo_vigencia,
+        'situacao': registro.situacao,
+        'providencia': registro.providencia,
+        'data_recepcao': registro.data_recepcao,
+        'data_inicio': registro.data_inicio,
+        'documento_pendente': registro.documento_pendente,
+        'documento_cancelado': registro.documento_cancelado,
+        'data_fim': registro.data_fim,
+        'duracao_dias_uteis': registro.duracao_dias_uteis,
+    }
+
     if request.method == 'POST':
         # Atualize os campos do registro com os dados do POST
         registro.nome = Nome.objects.get(id=request.POST.get('nome'))
@@ -221,6 +252,15 @@ def editar_registro(request, registro_id):
         # Salve o registro
         registro.save()
 
+        # Registre a atividade no histórico, incluindo os dados anteriores
+        Historico.objects.create(
+            usuario=request.user,
+            acao='editar',
+            dados_anteriores=dados_anteriores,
+            data=timezone.now(),
+            registro=registro
+        )
+
         # Chame as funções utilitárias
         registro.valor_total, registro.falta_liberar = calcular_valores(registro)
         exibir_modal, dias_restantes = exibir_modal_prazo_vigencia(registro)
@@ -237,6 +277,13 @@ def editar_registro(request, registro_id):
         messages.success(request, 'Registro editado com sucesso.')
         return redirect('home')
     
+    # Consulte o histórico
+    historico_registros = Historico.objects.filter(registro=registro).order_by('-data')
+
+    # Exiba ou manipule os dados anteriores conforme necessário
+    for historico in historico_registros:
+        dados_anteriores = historico.dados_anteriores
+    
     # Recupere as opções para os campos estrangeiros...
     nomes = Nome.objects.all()
     setores = Setor.objects.all()
@@ -252,6 +299,7 @@ def editar_registro(request, registro_id):
         'atividades': atividades,
         'messages': messages.get_messages(request),
         'registros': registros,
+        'historico_registros': historico_registros,
     }
 
     return render(request, 'editar_registro.html', context)
@@ -316,4 +364,13 @@ def tabela_filtrada(request):
     }
 
     return render(request, 'tabela_filtrada.html', context)
+
+def historico(request):
+    historico_registros = Historico.objects.all()
+
+    context = {
+        'historico_registros': historico_registros
+    }
+
+    return render(request, 'historico_template.html', context)
 

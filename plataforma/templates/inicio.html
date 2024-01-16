@@ -31,21 +31,22 @@
       align-items: center;
       color: #fff; /* Cor do texto dentro do botão */
       font-size: 16px; /* Tamanho da fonte do texto */
+      text-decoration: none; /* Remover sublinhado padrão do link */
     }
   </style>
 
   <div class="container">
-    <div class="button">CAIXA</div>
-    <div class="button">ESTADO</div>
-    <div class="button">FNDE</div>
-    <div class="button">SIMEC</div>
-    <div class="button">FNS</div>
-    <div class="button">ENTIDADES</div>
-    <div class="button">LICITAÇÃO</div>
-    <div class="button">FGTS</div>
-    <div class="button">RECEITA FEDERAL</div>
-    <div class="button">ADMINISTRAÇÃO</div>
-    <div class="button">CONTABILIDADE</div>
-    <div class="button">INDIVIDUALIZAÇÃO</div>
+    <a class="button" href="{% url 'tabela_caixa' %}">CAIXA</a>
+    <a class="button">ESTADO</a>
+    <a class="button">FNDE</a>
+    <a class="button">SIMEC</a>
+    <a class="button">FNS</a>
+    <a class="button">ENTIDADES</a>
+    <a class="button">LICITAÇÃO</a>
+    <a class="button">FGTS</a>
+    <a class="button">RECEITA FEDERAL</a>
+    <a class="button">ADMINISTRAÇÃO</a>
+    <a class="button">CONTABILIDADE</a>
+    <a class="button">INDIVIDUALIZAÇÃO</a>
   </div>
 {% endblock container %}

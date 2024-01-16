@@ -378,3 +378,18 @@ def historico(request):
 
     return render(request, 'historico_template.html', context)
 
+def tabela_caixa(request):
+    registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='CAIXA')
+
+    # Recupere dados para as listas suspensas
+    nomes = Nome.objects.all()
+    municipios = Municipio.objects.all()
+    
+    # Crie o contexto com os dados
+    context = {
+        'nomes': nomes,
+        'municipios': municipios,
+        'registros': registros,
+    }
+
+    return render(request, 'tabela_caixa.html', context)

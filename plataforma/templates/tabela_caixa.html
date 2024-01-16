@@ -6,6 +6,8 @@
 
 {% load custom_filters %}
 
+{% block title %}CAIXA{% endblock title %}
+
 {% block container %}
   <style>
     .table-container {
@@ -48,7 +50,7 @@
         <div class="modal-body">
           <!-- Adicione aqui o formulário de filtro -->
           <div class="container">
-            <form method="get" action="{% url 'tabela_caixa' %}">
+            <form method="get" action="{% url 'tabela_filtrada_caixa' %}">
               {% csrf_token %}
           
               <div class="form-group mb-3">
@@ -98,6 +100,7 @@
             </form>
           </div>
         </div>
+        
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
         </div>

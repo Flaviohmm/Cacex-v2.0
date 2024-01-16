@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% load humanize %}
+
+{% load custom_filters %}
+
+{% block title %}Filtros{% endblock title %}
+
+{% block container %}
+  <style>
+    .table-container {
+      overflow: auto;
+      max-height: 650px; /* Ajuste conforme necessário para o tamanho desejado */
+    }
+
+    .table-fixed {
+      width: auto;
+    }
+
+    .thead-fixed th {
+      position: sticky;
+      top: 0;
+      background-color: #fff; /* Cor de fundo desejada */
+      z-index: 1;
+    }
+
+    .col-fixed {
+      position: sticky;
+      left: 0;
+      background-color: #fff; /* Cor de fundo desejada */
+      z-index: 1;
+    }
+  </style>
+  <h3 class="m-4">Tabela de Atividades dos Funcionários - Filtro da CAIXA</h3>
+  <div class="container">
+    <form method="get" action="{% url 'tabela_filtrada_caixa' %}">
+      {% csrf_token %}
+  
+      <div class="form-group mb-3">
+        <fieldset>
+          <label class="form-label m-4" for="id_nome">Nome:</label>
+          <select class="form-select mx-4" name="nome" id="id_nome">
+            <option value="" selected>--------</option>
+            {% for nome in nomes %}
+              <option value="{{ nome.id }}">{{ nome.nome }}</option>
+            {% endfor %}
+          </select>
+        </fieldset>
+      </div>
+  
+      <div class="form-group mb-3">
+        <label class="form-label m-4" for="id_municipio">Município:</label>
+        <select class="form-select mx-4" name="municipio" id="id_municipio">
+          <option value="" selected>-------</option>
+          {% for mun in municipios %}
+            <option value="{{ mun.id }}">{{ mun.municipio }}</option>
+          {% endfor %}
+        </select>
+      </div>
+  
+      <div class="form-group mb-3">
+        <label class="form-label m-4" for="id_num_convenio">Nº Convênio:</label>
+        <input class="form-control mx-4" type="text" name="num_convenio" id="id_num_convenio">
+      </div>
+  
+      <div class="form-group mb-3">
+        <label class="form-label m-4" for="id_parlamentar">Parlamentar:</label>
+        <input class="form-control mx-4" type="text" name="parlamentar" id="id_parlamentar">
+      </div>
+  
+      <div class="form-group mb-3">
+        <label class="form-label m-4" for="id_prazo_vigencia">Prazo de Vigência:</label>
+        <input class="form-control mx-4" type="date" name="prazo_vigencia" id="id_prazo_vigencia">
+      </div>
+  
+      <div class="form-group mb-3">
+        <label class="form-label m-4" for="id_status">Status:</label>
+        <input class="form-control mx-4" type="text" name="status" id="id_status">
+      </div>
+  
+      <button type="submit" class="btn btn-primary m-4">Filtrar</button>
+      <br>
+    </form>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card bg-light ms-4 me-4 mb-4">
+        <div class="card-header">
+          <svg xmlns="http://www.w3.org/2000/svg" height="15" width="15" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V72c0-13.3-10.7-24-24-24H40zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zM16 232v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V232c0-13.3-10.7-24-24-24H40c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V392c0-13.3-10.7-24-24-24H40z"/></svg> 
+          Registro de Atividades dos Funcionários
+        </div>
+        <div class="card-body">
+          <p class="card-text">
+            <div class="table-container table-responsive">
+              <table class='table table-hover'>
+                <thead class="sticky-top">
+                  <tr>
+                    <th scope="col-fixed">NOME</th>
+                    <th scope="col-fixed">ORGÃO/SETOR</th>
+                    <th scope="col-fixed">MUNICÍPIO</th>
+                    <th scope="col-fixed">ATIVIDADE</th>
+                    <th scope="col-fixed">Nº CONVÊNIO</th>
+                    <th scope="col-fixed">PARLAMENTAR</th>
+                    <th scope="col-fixed">OBJETO</th>
+                    <th scope="col-fixed">OGE/OGU</th>
+                    <th scope="col-fixed">CP-PREFEITURA</th>
+                    <th scope="col-fixed">VALOR TOTAL</th>
+                    <th scope="col-fixed">VALOR LIBERADO</th>
+                    <th scope="col-fixed">FALTA LIBERAR</th>
+                    <th scope="col-fixed">PRAZO DE VIGÊNCIA</th>
+                    <th scope="col-fixed">SITUAÇÃO</th>
+                    <th scope="col-fixed">PROVIDÊNCIA</th>
+                    <th scope="col-fixed">STATUS</th>
+                    <th scope="col-fixed">DATA DE RECEPÇÃO</th>
+                    <th scope="col-fixed">DATA DE ÍNICIO</th>
+                    <th scope="col-fixed">DOCUMENTO PENDENTE</th>
+                    <th scope="col-fixed">DOCUMENTO CANCELADO</th>
+                    <th scope="col-fixed">DATA DO FIM</th>
+                    <th scope="col-fixed">DURAÇÃO DE DIAS ÚTEIS</th>
+                    <th scope="col-fixed">VER DETALHES</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% if registros_filtrados %}
+                    {% for registro in registros_filtrados %}
+                      <tr>
+                        <td>{{ registro.nome.nome }}</td>
+                        <td>{{ registro.orgao_setor.orgao_setor }}</td>
+                        <td>{{ registro.municipio.municipio }}</td>
+                        <td>{{ registro.atividade.atividade }}</td>
+                        <td>{{ registro.num_convenio }}</td>
+                        <td>{{ registro.parlamentar }}</td>
+                        <td>{{ registro.objeto }}</td>
+                        <td>{{ registro.oge_ogu|format_currency }}</td>
+                        <td>{{ registro.cp_prefeitura|format_currency }}</td>
+                        <td>{{ registro.calcular_valores.0|format_currency }}</td>
+                        <td>{{ registro.valor_liberado|format_currency }}</td>
+                        <td>{{ registro.calcular_valores.1|format_currency }}</td>
+                        <td>{{ registro.prazo_vigencia }}</td>
+                        <td>{{ registro.situacao }}</td>
+                        <td>{{ registro.providencia }}</td>
+                        <td>{{ registro.status }}</td>
+                        <td>{{ registro.data_recepcao }}</td>
+                        <td>
+                          {% if registro.data_inicio %}
+                              {{ registro.data_inicio }}
+                          {% else %}
+                              Sem data de início
+                          {% endif %}
+                        </td>
+                        <td>{% if registro.documento_pendente %}Sim{% else %}Não{% endif %}</td>
+                        <td>{% if registro.documento_cancelado %}Sim{% else %}Não{% endif %}</td>
+                        <td>
+                          {% if registro.data_fim %}
+                              {{ registro.data_fim }}
+                          {% else %}
+                              Sem data de término
+                          {% endif %}
+                        </td>
+                        <td>{{ registro.dia_trabalho_total }}</td>
+                        <td>
+                        
+                          <!-- Botão para acionar o modal -->
+                          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#detalhesModal{{ registro.id }}">
+                            Detalhes
+                          </button>
+                    
+                          <!-- Modal -->
+                          <div class="modal fade" id="detalhesModal{{ registro.id }}" tabindex="-1" role="dialog" aria-labelledby="detalhesModalLabel{{ registro.id }}" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="detalhesModalLabel{{ registro.id }}">Detalhes do Registro</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" data-custom-close-button="{{ registro.id }}">
+                                    <span aria-hidden="true"></span>
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                  <!-- Conteúdo do modal com os detalhes do registro -->
+                                  <p><strong>Nome:</strong> {{ registro.nome.nome }}</p>
+                                  <p><strong>Orgão/Setor:</strong> {{ registro.orgao_setor.orgao_setor }}</p>
+                                  <p><strong>Município:</strong> {{ registro.municipio.municipio }}</p>
+                                  <p><strong>Atividade:</strong> {{ registro.atividade.atividade }}</p>
+  
+                                  <p><strong>Nº do Convênio:</strong> {{ registro.num_convenio }}</p>
+                                  <p><strong>Parlamentar:</strong> {{ registro.parlamentar }}</p>
+                                  <p><strong>Objeto:</strong> {{ registro.objeto }}</p>
+                                  <p><strong>OGE/OGU:</strong> {{ registro.oge_ogu|format_currency }}</p>
+                                  <p><strong>CP Prefeitura:</strong> {{ registro.cp_prefeitura|format_currency }}</p>
+                                  <p><strong>Valor Total:</strong> {{ registro.calcular_valores.0|format_currency }}</p>
+  
+                                  <p><strong>Valor Liberado:</strong> {{ registro.valor_liberado|format_currency }}</p>
+                                  <p><strong>Falta Liberar:</strong> {{ registro.calcular_valores.1|format_currency }}</p>
+                                  <p><strong>Prazo de Vigência:</strong> {{ registro.prazo_vigencia }}</p>
+                                  <p><strong>Situação:</strong> {{ registro.situacao }}</p>
+                                  <p><strong>Providência:</strong> {{ registro.providencia }}</p>
+  
+                                  <p><strong>Status:</strong> {{ registro.status }}</p>
+                                  <p><strong>Data de Recepção:</strong> {{ registro.data_recepcao }}</p>
+                                  <p><strong>Data de Inicio:</strong> {% if registro.data_inicio %}{{ registro.data_inicio }}{% else %}Sem data de término{% endif %}</p>
+                                  
+                                  <p><strong>Data de Término:</strong> {% if registro.data_fim %}{{ registro.data_fim }}{% else %}Sem data de término{% endif %}</p>
+                                  <p><strong>Dias de Trabalho Total:</strong> {{ registro.dia_trabalho_total }}</p>
+                                </div>
+                                <div class="modal-footer">
+                                  <!-- Botão para acionar a página de edição do registro -->
+                                  <a href="{% url 'editar_registro' registro.id %}" class="btn btn-primary">Editar Registro</a>
+                                  <!-- Adicione o botão "Excluir Registro" com um formulário de confirmação -->
+                                  <form method="post" action="{% url 'excluir_registro' registro.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir o registro?')">Excluir Registro</button>
+                                  </form>
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close" data-custom-close-button="{{ registro.id }}">Fechar</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  {% else %}
+                    <tr>
+                      <td colspan="26">Nenhum registro encontrado.</td>
+                    </tr>
+                  {% endif %}
+                </tbody>
+              </table>
+
+              {% if registros_filtrados %}
+                <p class="m-4">Nº de Registros: {{ registros_filtrados.count }}</p>
+              {% else %}
+                <p>registros está vazio ou não está sendo passado corretamente.</p>
+              {% endif %}
+            </div>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div> 
+
+  <script>
+    $(document).ready(function () {
+      var tableContainer = $('.table-container');
+  
+      // Adicione uma função de rolagem ao contêiner da tabela
+      tableContainer.scroll(function () {
+        var leftOffset = tableContainer.scrollLeft();
+        $('.col-fixed').css('left', leftOffset);
+      });
+    });
+  </script>
+  
+  <!-- Inclua o jQuery primeiro -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Em seguida, inclua o Bootstrap JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+{% endblock container %}

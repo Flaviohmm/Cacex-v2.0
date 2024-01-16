@@ -393,3 +393,47 @@ def tabela_caixa(request):
     }
 
     return render(request, 'tabela_caixa.html', context)
+
+def tabela_filtrada_caixa(request):
+    nomes = Nome.objects.all()
+    orgaos_setores = Setor.objects.all()
+    municipios = Municipio.objects.all()
+
+    # Adicionando o filtro para orgao_setor igual a 'CAIXA'
+    orgao_setor_caixa = Setor.objects.get(orgao_setor='CAIXA')
+
+    nome_id = request.GET.get('nome')
+    municipio_id = request.GET.get('municipio')
+    num_convenio = request.GET.get('num_convenio')
+    parlamentar = request.GET.get('parlamentar')
+    prazo_vigencia = request.GET.get('prazo_vigencia')
+    status = request.GET.get('status')
+
+    registros_filtrados = RegistroFuncionarios.objects.filter(orgao_setor=orgao_setor_caixa)
+
+    if nome_id:
+        registros_filtrados = registros_filtrados.filter(nome__id=nome_id)
+
+    if municipio_id:
+        registros_filtrados = registros_filtrados.filter(municipio__id=municipio_id)
+
+    if num_convenio:
+        registros_filtrados = registros_filtrados.filter(num_convenio__icontains=num_convenio)
+
+    if parlamentar:
+        registros_filtrados = registros_filtrados.filter(parlamentar__icontains=parlamentar)
+
+    if prazo_vigencia:
+        registros_filtrados = registros_filtrados.filter(prazo_vigencia__icontains=prazo_vigencia)
+
+    if status:
+        registros_filtrados = registros_filtrados.filter(status__icontains=status)
+
+    context = {
+        'nomes': nomes,
+        'orgaos_setores': orgaos_setores,
+        'municipios': municipios,
+        'registros_filtrados': registros_filtrados,
+    }
+
+    return render(request, 'tabela_filtrada_caixa.html', context)

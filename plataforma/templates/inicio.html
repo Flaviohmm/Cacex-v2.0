@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Home{% endblock title %}
+
+{% block container %}
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 1344px;
+      height: 539px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr); /* 4 columns */
+      gap: 10px; /* Espaçamento entre os botões */
+      justify-content: center;
+      align-content: center;
+    }
+
+    .button {
+      width: 254px;
+      height: 97px;
+      border-radius: 15px;
+      background: #0f51a1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff; /* Cor do texto dentro do botão */
+      font-size: 16px; /* Tamanho da fonte do texto */
+    }
+  </style>
+
+  <div class="container">
+    <div class="button">CAIXA</div>
+    <div class="button">ESTADO</div>
+    <div class="button">FNDE</div>
+    <div class="button">SIMEC</div>
+    <div class="button">FNS</div>
+    <div class="button">ENTIDADES</div>
+    <div class="button">LICITAÇÃO</div>
+    <div class="button">FGTS</div>
+    <div class="button">RECEITA FEDERAL</div>
+    <div class="button">ADMINISTRAÇÃO</div>
+    <div class="button">CONTABILIDADE</div>
+    <div class="button">INDIVIDUALIZAÇÃO</div>
+  </div>
+{% endblock container %}

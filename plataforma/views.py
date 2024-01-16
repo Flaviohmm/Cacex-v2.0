@@ -29,6 +29,10 @@ def home(request):
 
     return render(request, 'home.html', context)
 
+@login_required(login_url='/auth/login')
+def inicio(request):
+    return render(request, 'inicio.html')
+
 def adicionar_nome(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')

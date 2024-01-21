@@ -27,4 +27,5 @@ urlpatterns = [
     path('editar_registro/<int:registro_id>/', views.editar_registro, name='editar_registro'),
     path('excluir_registros/<int:registro_id>/', views.excluir_registro, name='excluir_registro'),
     path('historico/', views.historico, name='historico'),
+    path('historico_detail/<int:registro_id>/', views.historico_detail, name='historico_detail'),
 ]

@@ -378,6 +378,20 @@ def historico(request):
 
     return render(request, 'historico_template.html', context)
 
+def historico_detail(request, registro_id):
+    # Obtenha o registro específico
+    registro = get_object_or_404(RegistroFuncionarios, id=registro_id)
+
+    # Obtém os registros do histórico relacionados ao registro específico
+    historico_registros = Historico.objects.filter(registro_id=registro).order_by('-data')
+
+    context = {
+        'historico_registros': historico_registros,
+        'registro_id': registro_id
+    }
+
+    return render(request, 'historico_detail_template.html', context)
+
 def tabela_caixa(request):
     registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='CAIXA')
 

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% load humanize %}
+
+{% load custom_filters %}
+
+{% block title %}Histórico de Registros{% endblock title %}
+
+{% block container %}
+    <div class="m-4">
+      <h1>Detalhes do Histórico para o Registro</h1> <br>
+  
+      <ul class="list-group">
+        {% for historico in historico_registros %}
+          <li class="list-group-item justify-content-between align-items-center">
+            <strong>Ação:</strong> {{ historico.acao }}<br>
+            <strong>Data:</strong> {{ historico.data }}<br>
+            <strong>Usuário:</strong> {{ historico.usuario }}<br>
+            <strong>Dados Anteriores:</strong> <br>
+  
+            <div class="container">
+              {% for key, value in historico.dados_anteriores.items %}
+                <strong>{{ key }}:</strong> {{ value }} <br>
+              {% endfor %}
+            </div>
+            
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+{% endblock container %}

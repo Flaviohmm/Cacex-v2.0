@@ -437,3 +437,303 @@ def tabela_filtrada_caixa(request):
     }
 
     return render(request, 'tabela_filtrada_caixa.html', context)
+
+def tabela_estado(request):
+    registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='ESTADO')
+
+    # Recupere dados para as listas suspensas
+    nomes = Nome.objects.all()
+    municipios = Municipio.objects.all()
+    
+    # Crie o contexto com os dados
+    context = {
+        'nomes': nomes,
+        'municipios': municipios,
+        'registros': registros,
+    }
+
+    return render(request, 'tabela_estado.html', context)
+
+def tabela_filtrada_estado(request):
+    nomes = Nome.objects.all()
+    orgaos_setores = Setor.objects.all()
+    municipios = Municipio.objects.all()
+
+    # Adicionando o filtro para orgao_setor igual a 'ESTADO'
+    orgao_setor_estado = Setor.objects.get(orgao_setor='ESTADO')
+
+    nome_id = request.GET.get('nome')
+    municipio_id = request.GET.get('municipio')
+    num_convenio = request.GET.get('num_convenio')
+    parlamentar = request.GET.get('parlamentar')
+    prazo_vigencia = request.GET.get('prazo_vigencia')
+    status = request.GET.get('status')
+
+    registros_filtrados = RegistroFuncionarios.objects.filter(orgao_setor=orgao_setor_estado)
+
+    if nome_id:
+        registros_filtrados = registros_filtrados.filter(nome__id=nome_id)
+
+    if municipio_id:
+        registros_filtrados = registros_filtrados.filter(municipio__id=municipio_id)
+
+    if num_convenio:
+        registros_filtrados = registros_filtrados.filter(num_convenio__icontains=num_convenio)
+
+    if parlamentar:
+        registros_filtrados = registros_filtrados.filter(parlamentar__icontains=parlamentar)
+
+    if prazo_vigencia:
+        registros_filtrados = registros_filtrados.filter(prazo_vigencia__icontains=prazo_vigencia)
+
+    if status:
+        registros_filtrados = registros_filtrados.filter(status__icontains=status)
+
+    context = {
+        'nomes': nomes,
+        'orgaos_setores': orgaos_setores,
+        'municipios': municipios,
+        'registros_filtrados': registros_filtrados,
+    }
+
+    return render(request, 'tabela_filtrada_estado.html', context)
+
+def tabela_fnde(request):
+    registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='FNDE')
+
+    # Recupere dados para as listas suspensas
+    nomes = Nome.objects.all()
+    municipios = Municipio.objects.all()
+    
+    # Crie o contexto com os dados
+    context = {
+        'nomes': nomes,
+        'municipios': municipios,
+        'registros': registros,
+    }
+
+    return render(request, 'tabela_fnde.html', context)
+
+def tabela_filtrada_fnde(request):
+    nomes = Nome.objects.all()
+    orgaos_setores = Setor.objects.all()
+    municipios = Municipio.objects.all()
+
+    # Adicionando o filtro para orgao_setor igual a 'FNDE'
+    orgao_setor_fnde = Setor.objects.get(orgao_setor='FNDE')
+
+    nome_id = request.GET.get('nome')
+    municipio_id = request.GET.get('municipio')
+    num_convenio = request.GET.get('num_convenio')
+    parlamentar = request.GET.get('parlamentar')
+    prazo_vigencia = request.GET.get('prazo_vigencia')
+    status = request.GET.get('status')
+
+    registros_filtrados = RegistroFuncionarios.objects.filter(orgao_setor=orgao_setor_fnde)
+
+    if nome_id:
+        registros_filtrados = registros_filtrados.filter(nome__id=nome_id)
+
+    if municipio_id:
+        registros_filtrados = registros_filtrados.filter(municipio__id=municipio_id)
+
+    if num_convenio:
+        registros_filtrados = registros_filtrados.filter(num_convenio__icontains=num_convenio)
+
+    if parlamentar:
+        registros_filtrados = registros_filtrados.filter(parlamentar__icontains=parlamentar)
+
+    if prazo_vigencia:
+        registros_filtrados = registros_filtrados.filter(prazo_vigencia__icontains=prazo_vigencia)
+
+    if status:
+        registros_filtrados = registros_filtrados.filter(status__icontains=status)
+
+    context = {
+        'nomes': nomes,
+        'orgaos_setores': orgaos_setores,
+        'municipios': municipios,
+        'registros_filtrados': registros_filtrados,
+    }
+
+    return render(request, 'tabela_filtrada_fnde.html', context)
+
+def tabela_simec(request):
+    registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='SIMEC')
+
+    # Recupere dados para as listas suspensas
+    nomes = Nome.objects.all()
+    municipios = Municipio.objects.all()
+    
+    # Crie o contexto com os dados
+    context = {
+        'nomes': nomes,
+        'municipios': municipios,
+        'registros': registros,
+    }
+
+    return render(request, 'tabela_simec.html', context)
+
+def tabela_filtrada_simec(request):
+    nomes = Nome.objects.all()
+    orgaos_setores = Setor.objects.all()
+    municipios = Municipio.objects.all()
+
+    # Adicionando o filtro para orgao_setor igual a 'SIMEC'
+    orgao_setor_simec = Setor.objects.get(orgao_setor='SIMEC')
+
+    nome_id = request.GET.get('nome')
+    municipio_id = request.GET.get('municipio')
+    num_convenio = request.GET.get('num_convenio')
+    parlamentar = request.GET.get('parlamentar')
+    prazo_vigencia = request.GET.get('prazo_vigencia')
+    status = request.GET.get('status')
+
+    registros_filtrados = RegistroFuncionarios.objects.filter(orgao_setor=orgao_setor_simec)
+
+    if nome_id:
+        registros_filtrados = registros_filtrados.filter(nome__id=nome_id)
+
+    if municipio_id:
+        registros_filtrados = registros_filtrados.filter(municipio__id=municipio_id)
+
+    if num_convenio:
+        registros_filtrados = registros_filtrados.filter(num_convenio__icontains=num_convenio)
+
+    if parlamentar:
+        registros_filtrados = registros_filtrados.filter(parlamentar__icontains=parlamentar)
+
+    if prazo_vigencia:
+        registros_filtrados = registros_filtrados.filter(prazo_vigencia__icontains=prazo_vigencia)
+
+    if status:
+        registros_filtrados = registros_filtrados.filter(status__icontains=status)
+
+    context = {
+        'nomes': nomes,
+        'orgaos_setores': orgaos_setores,
+        'municipios': municipios,
+        'registros_filtrados': registros_filtrados,
+    }
+
+    return render(request, 'tabela_filtrada_simec.html', context)
+
+def tabela_fns(request):
+    registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='FNS')
+
+    # Recupere dados para as listas suspensas
+    nomes = Nome.objects.all()
+    municipios = Municipio.objects.all()
+    
+    # Crie o contexto com os dados
+    context = {
+        'nomes': nomes,
+        'municipios': municipios,
+        'registros': registros,
+    }
+
+    return render(request, 'tabela_fns.html', context)
+
+def tabela_filtrada_fns(request):
+    nomes = Nome.objects.all()
+    orgaos_setores = Setor.objects.all()
+    municipios = Municipio.objects.all()
+
+    # Adicionando o filtro para orgao_setor igual a 'FNS'
+    orgao_setor_fns = Setor.objects.get(orgao_setor='FNS')
+
+    nome_id = request.GET.get('nome')
+    municipio_id = request.GET.get('municipio')
+    num_convenio = request.GET.get('num_convenio')
+    parlamentar = request.GET.get('parlamentar')
+    prazo_vigencia = request.GET.get('prazo_vigencia')
+    status = request.GET.get('status')
+
+    registros_filtrados = RegistroFuncionarios.objects.filter(orgao_setor=orgao_setor_fns)
+
+    if nome_id:
+        registros_filtrados = registros_filtrados.filter(nome__id=nome_id)
+
+    if municipio_id:
+        registros_filtrados = registros_filtrados.filter(municipio__id=municipio_id)
+
+    if num_convenio:
+        registros_filtrados = registros_filtrados.filter(num_convenio__icontains=num_convenio)
+
+    if parlamentar:
+        registros_filtrados = registros_filtrados.filter(parlamentar__icontains=parlamentar)
+
+    if prazo_vigencia:
+        registros_filtrados = registros_filtrados.filter(prazo_vigencia__icontains=prazo_vigencia)
+
+    if status:
+        registros_filtrados = registros_filtrados.filter(status__icontains=status)
+
+    context = {
+        'nomes': nomes,
+        'orgaos_setores': orgaos_setores,
+        'municipios': municipios,
+        'registros_filtrados': registros_filtrados,
+    }
+
+    return render(request, 'tabela_filtrada_fns.html', context)
+
+def tabela_entidade(request):
+    registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='Entidade')
+
+    # Recupere dados para as listas suspensas
+    nomes = Nome.objects.all()
+    municipios = Municipio.objects.all()
+    
+    # Crie o contexto com os dados
+    context = {
+        'nomes': nomes,
+        'municipios': municipios,
+        'registros': registros,
+    }
+
+    return render(request, 'tabela_entidade.html', context)
+
+def tabela_filtrada_entidade(request):
+    nomes = Nome.objects.all()
+    orgaos_setores = Setor.objects.all()
+    municipios = Municipio.objects.all()
+
+    # Adicionando o filtro para orgao_setor igual a 'Entidade'
+    orgao_setor_entidade = Setor.objects.get(orgao_setor='Entidade')
+
+    nome_id = request.GET.get('nome')
+    municipio_id = request.GET.get('municipio')
+    num_convenio = request.GET.get('num_convenio')
+    parlamentar = request.GET.get('parlamentar')
+    prazo_vigencia = request.GET.get('prazo_vigencia')
+    status = request.GET.get('status')
+
+    registros_filtrados = RegistroFuncionarios.objects.filter(orgao_setor=orgao_setor_entidade)
+
+    if nome_id:
+        registros_filtrados = registros_filtrados.filter(nome__id=nome_id)
+
+    if municipio_id:
+        registros_filtrados = registros_filtrados.filter(municipio__id=municipio_id)
+
+    if num_convenio:
+        registros_filtrados = registros_filtrados.filter(num_convenio__icontains=num_convenio)
+
+    if parlamentar:
+        registros_filtrados = registros_filtrados.filter(parlamentar__icontains=parlamentar)
+
+    if prazo_vigencia:
+        registros_filtrados = registros_filtrados.filter(prazo_vigencia__icontains=prazo_vigencia)
+
+    if status:
+        registros_filtrados = registros_filtrados.filter(status__icontains=status)
+
+    context = {
+        'nomes': nomes,
+        'orgaos_setores': orgaos_setores,
+        'municipios': municipios,
+        'registros_filtrados': registros_filtrados,
+    }
+
+    return render(request, 'tabela_filtrada_entidade.html', context)

@@ -29,5 +29,6 @@ urlpatterns = [
     path('historico/', views.historico, name='historico'),
     path('historico_detail/<int:registro_id>/', views.historico_detail, name='historico_detail'),
     path('anexar_registro/<int:registro_id>/', views.anexar_registro, name='anexar_registro'),
+    path('desanexar_registro/<int:registro_id>/', views.desanexar_registro, name='desanexar_registro'),
     path('mostrar_registros_anexados/', views.mostrar_registros_anexados, name='mostrar_registros_anexados'),
 ]

@@ -753,32 +753,123 @@ def tabela_filtrada_entidade(request):
     return render(request, 'tabela_filtrada_entidade.html', context)
 
 def anexar_registro(request, registro_id):
+    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+
     # Obtenha o registro a ser anexado
     registro = get_object_or_404(RegistroFuncionarios, id=registro_id)
 
-    # Obtenha a lista de registros anexados da sessão
+    # Obtenha a lista de registros anexados e desanexados da sessão
     registros_anexados = request.session.get('registros_anexados', [])
+    registros_desanexados = request.session.get('registros_desanexados', [])
 
-    # Adicione o ID do registro à lista de registros anexados
+    # Verifique se o registro já está anexado
     if registro_id not in registros_anexados:
-        registros_anexados.append(registro_id)
+        # Chame as funções utilitárias
+        registro.valor_total, registro.falta_liberar = calcular_valores(registro)
+        registro.duracao_dias_uteis = dia_trabalho_total(registro.data_inicio, registro.data_fim)
 
-    # Atualize a lista de registros anexados na sessão
-    request.session['registros_anexados'] = registros_anexados
+        # Converta o registro para um dicionário antes de adicionar à lista
+        registro_dict = {
+            'id': registro.id,
+            'nome': registro.nome.nome,
+            'orgao_setor': registro.orgao_setor.orgao_setor,
+            'municipio': registro.municipio.municipio,
+            'atividade': registro.atividade.atividade,
+            'num_convenio': registro.num_convenio,
+            'parlamentar': registro.parlamentar,
+            'objeto': registro.objeto,
+            'oge_ogu': locale.currency(registro.oge_ogu, grouping=True),
+            'cp_prefeitura': locale.currency(registro.cp_prefeitura, grouping=True),
+            'valor_total': locale.currency(registro.valor_total, grouping=True),
+            'valor_liberado': locale.currency(registro.valor_liberado, grouping=True),
+            'falta_liberar': locale.currency(registro.falta_liberar, grouping=True),
+            'prazo_de_vigencia': registro.prazo_vigencia.strftime('%d-%m-%Y'),
+            'situacao': registro.situacao,
+            'providencia': registro.providencia,
+            'status': registro.status,
+            'data_recepcao': registro.data_recepcao.strftime('%d-%m-%Y'),
+            'data_inicio': registro.data_inicio.strftime('%d-%m-%Y') if registro.data_inicio else None,
+            'documento_pendente': registro.documento_pendente,
+            'documento_cancelado': registro.documento_cancelado,
+            'data_fim': registro.data_fim.strftime('%d-%m-%Y') if registro.data_fim else None,
+            'duracao_dias_uteis': registro.duracao_dias_uteis,
+        }
+
+        # Adicione o registro completo à lista de registros anexados
+        registros_anexados.append(registro_dict)
+
+        # Remova o registro da lista de registros desanexadas, se estiver presente
+        if registro_id in registros_desanexados:
+            registros_desanexados.remove(registro_id)
+
+        # Atualize a lista de registros anexados e desanexados na sessão
+        request.session['registros_anexados'] = registros_anexados
+        request.session['registros_desanexados'] = registros_desanexados
+
+        print("Registros Anexados: ", registros_anexados)
+
+        # Remova o registro da tabela original
+        registro.delete()
+
+        print("Registros Anexados: ", registros_anexados)
 
     # Redirecione para a página que mostrará todos os registros anexados
     return redirect('mostrar_registros_anexados')
 
-def mostrar_registros_anexados(request):
-    # Obtenha a lista de registros anexados da sessão
+def desanexar_registro(request, registro_id):
+    # Obtenha as linhas de registros anexados e desanexados da sessão
     registros_anexados = request.session.get('registros_anexados', [])
+    registros_desanexados = request.session.get('registros_desanexados', [])
+
+    # Verifique se o registro está anexado e remova-o
+    if registro_id in registros_anexados:
+        # Obtém o registro a ser desanexado
+        registro = get_object_or_404(RegistroFuncionarios, id=registro_id)
+
+        # Exclua o arquivo anexado, se existir
+        if registro.arquivo:
+            registro.arquivo.delete()
+
+        # Remove o registro da lista de registros anexados
+        registros_anexados.remove(registro_id)
+
+        # Adicione o registro à lista de registros desanexados
+        registros_desanexados.append(registro_id)
+
+        # Atualize as listas de registros anexados e desanexados na sessão
+        request.session['registros_anexados'] = registros_anexados
+        request.session['registros_desanexados'] = registros_desanexados
+
+        # Redirecione para a página que mostrará todos os registros anexados
+        return redirect('mostrar_registros_anexados')
+    
+    # Se o registro não estiver anexado, redirecione para a tabela original
+    return redirect('home')
+
+def mostrar_registros_anexados(request):
+    # Obtenha a lista de registros anexados e desanexados da sessão
+    registros_anexados_ids = [registro['id'] for registro in request.session.get('registros_anexados', [])]
+    registros_desanexados = request.session.get('registros_desanexados', [])
+
+    # Recupere as instâncias dos registros anexados
+    registros_anexados = RegistroFuncionarios.objects.filter(id__in=registros_anexados_ids)
 
     # Obtenha os registros anexados completos
-    registros_anexados_completos = RegistroFuncionarios.objects.filter(id__in=registros_anexados)
+    registros_anexados_completos = [
+        registro for registro in request.session.get('registros_anexados', [])
+        if registro['id'] in registros_anexados_ids
+    ]
+    
+    # Obtenha os registros desanexados completos
+    registros_desanexados_completos = RegistroFuncionarios.objects.filter(id__in=registros_desanexados)
 
     context = {
-        'registros_anexados': registros_anexados_completos
+        'registros_anexados': registros_anexados_completos,
+        'registros_desanexados': registros_desanexados_completos
     }
+
+    print("Registros Anexados: ", registros_anexados)
+    print(registros_anexados_completos)
 
     return render(request, 'tabela_anexados.html', context)
     

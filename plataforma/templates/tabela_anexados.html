@@ -77,19 +77,19 @@
                 <tbody>
                   {% for registro in registros_anexados %}
                     <tr>
-                      <td>{{ registro.nome.nome }}</td>
-                      <td>{{ registro.orgao_setor.orgao_setor }}</td>
-                      <td>{{ registro.municipio.municipio }}</td>
-                      <td>{{ registro.atividade.atividade }}</td>
+                      <td>{{ registro.nome }}</td>
+                      <td>{{ registro.orgao_setor }}</td>
+                      <td>{{ registro.municipio }}</td>
+                      <td>{{ registro.atividade }}</td>
                       <td>{{ registro.num_convenio }}</td>
                       <td>{{ registro.parlamentar }}</td>
                       <td>{{ registro.objeto }}</td>
                       <td>{{ registro.oge_ogu|format_currency }}</td>
                       <td>{{ registro.cp_prefeitura|format_currency }}</td>
-                      <td>{{ registro.calcular_valores.0|format_currency }}</td>
+                      <td>{{ registro.valor_total|format_currency }}</td>
                       <td>{{ registro.valor_liberado|format_currency }}</td>
-                      <td>{{ registro.calcular_valores.1|format_currency }}</td>
-                      <td>{{ registro.prazo_vigencia }}</td>
+                      <td>{{ registro.falta_liberar|format_currency }}</td>
+                      <td>{{ registro.prazo_de_vigencia }}</td>
                       <td>{{ registro.situacao }}</td>
                       <td>{{ registro.providencia }}</td>
                       <td>{{ registro.status }}</td>
@@ -110,7 +110,7 @@
                             Sem data de término
                         {% endif %}
                       </td>
-                      <td>{{ registro.dia_trabalho_total }}</td>
+                      <td>{{ registro.duracao_dias_uteis }}</td>
                       <td>
                         
                         <!-- Botão para acionar o modal -->
@@ -160,6 +160,7 @@
                                 <a href="{% url 'editar_registro' registro.id %}" class="btn btn-primary">Editar</a>
                                 <a href="{% url 'historico' %}" class="btn btn-warning">Histórico</a>
                                 <a href="{% url 'historico_detail' registro_id=registro.id %}" class="btn btn-info">Histórico ID</a>
+                                <a href="{% url 'desanexar_registro' registro_id=registro.id %}" class="btn btn-dark">Desanexar</a>
                                 <!-- Adicione o botão "Excluir Registro" com um formulário de confirmação -->
                                 <form method="post" action="{% url 'excluir_registro' registro.id %}" class="d-inline">
                                   {% csrf_token %}

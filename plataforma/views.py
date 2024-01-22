@@ -751,3 +751,34 @@ def tabela_filtrada_entidade(request):
     }
 
     return render(request, 'tabela_filtrada_entidade.html', context)
+
+def anexar_registro(request, registro_id):
+    # Obtenha o registro a ser anexado
+    registro = get_object_or_404(RegistroFuncionarios, id=registro_id)
+
+    # Obtenha a lista de registros anexados da sessão
+    registros_anexados = request.session.get('registros_anexados', [])
+
+    # Adicione o ID do registro à lista de registros anexados
+    if registro_id not in registros_anexados:
+        registros_anexados.append(registro_id)
+
+    # Atualize a lista de registros anexados na sessão
+    request.session['registros_anexados'] = registros_anexados
+
+    # Redirecione para a página que mostrará todos os registros anexados
+    return redirect('mostrar_registros_anexados')
+
+def mostrar_registros_anexados(request):
+    # Obtenha a lista de registros anexados da sessão
+    registros_anexados = request.session.get('registros_anexados', [])
+
+    # Obtenha os registros anexados completos
+    registros_anexados_completos = RegistroFuncionarios.objects.filter(id__in=registros_anexados)
+
+    context = {
+        'registros_anexados': registros_anexados_completos
+    }
+
+    return render(request, 'tabela_anexados.html', context)
+    

@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.messages import constants
 from django.utils import timezone
+from django.utils.dateparse import parse_date
+from datetime import datetime
 from .models import RegistroFuncionarios, Nome, Setor, Municipio, Atividade, Historico
 from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
 import locale
@@ -806,45 +808,74 @@ def anexar_registro(request, registro_id):
         request.session['registros_anexados'] = registros_anexados
         request.session['registros_desanexados'] = registros_desanexados
 
-        print("Registros Anexados: ", registros_anexados)
-
         # Remova o registro da tabela original
         registro.delete()
-
-        print("Registros Anexados: ", registros_anexados)
 
     # Redirecione para a página que mostrará todos os registros anexados
     return redirect('mostrar_registros_anexados')
 
 def desanexar_registro(request, registro_id):
-    # Obtenha as linhas de registros anexados e desanexados da sessão
+    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+
+    # Obtenha a lista de registros anexados e desanexados da sessão
     registros_anexados = request.session.get('registros_anexados', [])
     registros_desanexados = request.session.get('registros_desanexados', [])
 
-    # Verifique se o registro está anexado e remova-o
-    if registro_id in registros_anexados:
-        # Obtém o registro a ser desanexado
-        registro = get_object_or_404(RegistroFuncionarios, id=registro_id)
+    # Verifique se o registro já está desanexado
+    if registro_id not in registros_desanexados:
+        # Obtenha o registro a ser desanexado a partir da lista de registros anexados
+        registro_dict = next((registro for registro in registros_anexados if registro['id'] == registro_id), None)
 
-        # Exclua o arquivo anexado, se existir
-        if registro.arquivo:
-            registro.arquivo.delete()
+        if registro_dict:
+            # Crie uma instância de Nome (substitua 'Nome' pelo seu modelo real)
+            nome_instance = Nome.objects.get(nome=registro_dict['nome'])
+            orgao_setor_instance = Setor.objects.get(orgao_setor=registro_dict['orgao_setor'])
+            municipio_instance = Municipio.objects.get(municipio=registro_dict['municipio'])
+            atividade_instance = Atividade.objects.get(atividade=registro_dict['atividade'])
 
-        # Remove o registro da lista de registros anexados
-        registros_anexados.remove(registro_id)
+            # Converta o registro_dict para um objeto RegistroFuncionarios
+            novo_registro = RegistroFuncionarios(
+                nome=nome_instance,
+                orgao_setor=orgao_setor_instance,
+                municipio=municipio_instance,
+                atividade=atividade_instance,
+                num_convenio=registro_dict['num_convenio'],
+                parlamentar=registro_dict['parlamentar'],
+                objeto=registro_dict['objeto'],
+                oge_ogu = registro_dict['oge_ogu'].replace('R$', '').replace('.', '').replace(',', '.').strip(),
+                cp_prefeitura = registro_dict['cp_prefeitura'].replace('R$', '').replace('.', '').replace(',', '.').strip(),
+                valor_liberado = registro_dict['valor_liberado'].replace('R$', '').replace('.', '').replace(',', '.').strip(),
+                prazo_vigencia=datetime.strptime(registro_dict['prazo_de_vigencia'], '%d-%m-%Y').date(),
+                situacao=registro_dict['situacao'],
+                providencia=registro_dict['providencia'],
+                data_recepcao=datetime.strptime(registro_dict['data_recepcao'], '%d-%m-%Y').date(),
+                data_inicio=None if registro_dict['data_inicio'] is None else datetime.strptime(registro_dict['data_inicio'], '%d-%m-%Y').date(),
+                documento_pendente=registro_dict['documento_pendente'],
+                documento_cancelado=registro_dict['documento_cancelado'],
+                data_fim=None if registro_dict['data_fim'] is None else datetime.strptime(registro_dict['data_fim'], '%d-%m-%Y').date(),           
+            )
 
-        # Adicione o registro à lista de registros desanexados
-        registros_desanexados.append(registro_id)
+            # Salve o novo registro na tabela original
+            novo_registro.save()
 
-        # Atualize as listas de registros anexados e desanexados na sessão
-        request.session['registros_anexados'] = registros_anexados
-        request.session['registros_desanexados'] = registros_desanexados
+            # Adicione o registro novamente à tabela original
+            registros_anexados.append(registro_dict)
 
-        # Redirecione para a página que mostrará todos os registros anexados
-        return redirect('mostrar_registros_anexados')
-    
-    # Se o registro não estiver anexado, redirecione para a tabela original
+            # Remova o registro da lista de registros anexados
+            registros_anexados = [r for r in registros_anexados if r['id'] != registro_id]
+
+            # Atualize a lista de registros anexados e desanexados na sessão
+            request.session['registros_anexados'] = registros_anexados
+
+            # Adicione o registro à lista de registros desanexados
+            registros_desanexados.append(registro_id)
+
+            # Atualize a lista de registros desanexados na sessão
+            request.session['registros_desanexados'] = registros_desanexados
+
+    # Redirecione para a página que mostrará todos os registros desanexados
     return redirect('home')
+    
 
 def mostrar_registros_anexados(request):
     # Obtenha a lista de registros anexados e desanexados da sessão
@@ -867,9 +898,9 @@ def mostrar_registros_anexados(request):
         'registros_anexados': registros_anexados_completos,
         'registros_desanexados': registros_desanexados_completos
     }
-
-    print("Registros Anexados: ", registros_anexados)
-    print(registros_anexados_completos)
+    
+    print('Registros Anexados: ', registros_anexados_completos)
+    print('Registros Desanexados: ',registros_desanexados)
 
     return render(request, 'tabela_anexados.html', context)
     

@@ -31,4 +31,5 @@ urlpatterns = [
     path('anexar_registro/<int:registro_id>/', views.anexar_registro, name='anexar_registro'),
     path('desanexar_registro/<int:registro_id>/', views.desanexar_registro, name='desanexar_registro'),
     path('mostrar_registros_anexados/', views.mostrar_registros_anexados, name='mostrar_registros_anexados'),
+    
 ]

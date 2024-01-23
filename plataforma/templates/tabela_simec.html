@@ -290,7 +290,7 @@
                                 <a href="{% url 'editar_registro' registro.id %}" class="btn btn-primary">Editar</a>
                                 <a href="{% url 'historico' %}" class="btn btn-warning">Histórico</a>
                                 <a href="{% url 'historico_detail' registro_id=registro.id %}" class="btn btn-info">Histórico ID</a>
-                                <a href="{% url 'anexar_registro' registro_id=registro.id %}" class="btn btn-dark">Anexar</a>
+                                <a href="{% url 'anexar_registro' registro_id=registro.id %}" class="btn btn-dark">Arquivar</a>
                                 <!-- Adicione o botão "Excluir Registro" com um formulário de confirmação -->
                                 <form method="post" action="{% url 'excluir_registro' registro.id %}" class="d-inline">
                                   {% csrf_token %}

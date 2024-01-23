@@ -130,21 +130,21 @@
                               </div>
                               <div class="modal-body">
                                 <!-- Conteúdo do modal com os detalhes do registro -->
-                                <p><strong>Nome:</strong> {{ registro.nome.nome }}</p>
-                                <p><strong>Orgão/Setor:</strong> {{ registro.orgao_setor.orgao_setor }}</p>
-                                <p><strong>Município:</strong> {{ registro.municipio.municipio }}</p>
-                                <p><strong>Atividade:</strong> {{ registro.atividade.atividade }}</p>
+                                <p><strong>Nome:</strong> {{ registro.nome }}</p>
+                                <p><strong>Orgão/Setor:</strong> {{ registro.orgao_setor }}</p>
+                                <p><strong>Município:</strong> {{ registro.municipio }}</p>
+                                <p><strong>Atividade:</strong> {{ registro.atividade }}</p>
 
                                 <p><strong>Nº do Convênio:</strong> {{ registro.num_convenio }}</p>
                                 <p><strong>Parlamentar:</strong> {{ registro.parlamentar }}</p>
                                 <p><strong>Objeto:</strong> {{ registro.objeto }}</p>
                                 <p><strong>OGE/OGU:</strong> {{ registro.oge_ogu|format_currency }}</p>
                                 <p><strong>CP Prefeitura:</strong> {{ registro.cp_prefeitura|format_currency }}</p>
-                                <p><strong>Valor Total:</strong> {{ registro.calcular_valores.0|format_currency }}</p>
+                                <p><strong>Valor Total:</strong> {{ registro.valor_total|format_currency }}</p>
 
                                 <p><strong>Valor Liberado:</strong> {{ registro.valor_liberado|format_currency }}</p>
-                                <p><strong>Falta Liberar:</strong> {{ registro.calcular_valores.1|format_currency }}</p>
-                                <p><strong>Prazo de Vigência:</strong> {{ registro.prazo_vigencia }}</p>
+                                <p><strong>Falta Liberar:</strong> {{ registro.falta_liberar|format_currency }}</p>
+                                <p><strong>Prazo de Vigência:</strong> {{ registro.prazo_de_vigencia }}</p>
                                 <p><strong>Situação:</strong> {{ registro.situacao }}</p>
                                 <p><strong>Providência:</strong> {{ registro.providencia }}</p>
 
@@ -153,14 +153,14 @@
                                 <p><strong>Data de Inicio:</strong> {% if registro.data_inicio %}{{ registro.data_inicio }}{% else %}Sem data de término{% endif %}</p>
                                 
                                 <p><strong>Data de Término:</strong> {% if registro.data_fim %}{{ registro.data_fim }}{% else %}Sem data de término{% endif %}</p>
-                                <p><strong>Dias de Trabalho Total:</strong> {{ registro.dia_trabalho_total }}</p>
+                                <p><strong>Dias de Trabalho Total:</strong> {{ registro.duracao_dias_uteis }}</p>
                               </div>
                               <div class="modal-footer">
                                 <!-- Botão para acionar a página de edição do registro -->
                                 <a href="{% url 'editar_registro' registro.id %}" class="btn btn-primary">Editar</a>
                                 <a href="{% url 'historico' %}" class="btn btn-warning">Histórico</a>
                                 <a href="{% url 'historico_detail' registro_id=registro.id %}" class="btn btn-info">Histórico ID</a>
-                                <a href="{% url 'desanexar_registro' registro_id=registro.id %}" class="btn btn-dark">Desanexar</a>
+                                <a href="{% url 'desanexar_registro' registro.id %}" class="btn btn-dark">Desarquivar</a>
                                 <!-- Adicione o botão "Excluir Registro" com um formulário de confirmação -->
                                 <form method="post" action="{% url 'excluir_registro' registro.id %}" class="d-inline">
                                   {% csrf_token %}

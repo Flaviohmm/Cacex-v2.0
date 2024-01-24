@@ -47,7 +47,7 @@ class Status(models.TextChoices):
 
 class RegistroFuncionarios(models.Model):
     class Meta:
-        verbose_name_plural = "Registros de Funcionários"
+        verbose_name_plural = "Registros da Tabela Geral"
 
     nome = models.ForeignKey(Nome, on_delete=models.CASCADE)
     orgao_setor = models.ForeignKey(Setor, on_delete=models.CASCADE)
@@ -169,3 +169,38 @@ class Historico(models.Model):
 
     def __str__(self):
         return f'{self.usuario} - {self.acao} em {self.data}'
+    
+class RegistroReceitaFederal(models.Model):
+    class Meta:
+        verbose_name_plural = "Tabela da Receita Federal"
+
+    nome = models.ForeignKey(Nome, on_delete=models.CASCADE)
+    municipio = models.ForeignKey(Municipio, on_delete=models.CASCADE)
+    atividade = models.ForeignKey(Atividade, on_delete=models.CASCADE)
+    num_parcelamento = models.IntegerField()
+    objeto = models.CharField(max_length=255)
+    valor_total = models.DecimalField(max_digits=10, decimal_places=2)
+    prazo_vigencia = models.DateField()
+    situacao = models.CharField(max_length=255)
+    providencia = models.CharField(max_length=255)
+
+    def save(self, *args, **kwargs):
+        if not self.prazo_vigencia:
+            raise ValueError("A data do prazo de vigência é obrigatório")
+        
+        if self.prazo_vigencia and isinstance(self.prazo_vigencia, str) and self.prazo_vigencia.strip():  # Verifica se a string não está vazia após remoção de espaços
+            try:
+                # Converta a string para objeto date
+                self.prazo_vigencia = datetime.strptime(self.prazo_vigencia, '%Y-%m-%d').date()
+            except ValueError:
+                raise ValidationError("Formato de data inválido para prazo de vigência. Deve ser no formato YYYY-MM-DD.")
+            
+        super().save(*args, **kwargs)
+            
+    def __str__(self):
+        return (
+            f"{self.nome.nome} | {self.municipio.municipio} | {self.atividade.atividade} | {self.num_parcelamento} | "
+            f"{self.objeto} | {self.valor_total} | {self.prazo_vigencia} | {self.situacao} |"
+            f"{self.providencia}"
+        )
+        

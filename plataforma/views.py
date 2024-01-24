@@ -5,7 +5,15 @@ from django.contrib.messages import constants
 from django.utils import timezone
 from django.utils.dateparse import parse_date
 from datetime import datetime
-from .models import RegistroFuncionarios, Nome, Setor, Municipio, Atividade, Historico
+from .models import (
+    RegistroFuncionarios, 
+    Nome, 
+    Setor, 
+    Municipio, 
+    Atividade, 
+    Historico,
+    RegistroReceitaFederal
+)
 from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
 import locale
 import json
@@ -898,9 +906,14 @@ def mostrar_registros_anexados(request):
         'registros_anexados': registros_anexados_completos,
         'registros_desanexados': registros_desanexados_completos
     }
-    
-    print('Registros Anexados: ', registros_anexados_completos)
-    print('Registros Desanexados: ',registros_desanexados)
 
     return render(request, 'tabela_anexados.html', context)
+
+# def adicionar_registro_rf(request):
+#     # Defina a localidade para o formato brasileiro
+#     locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+
+#     if request.method == 'POST':
+#         nome = Nome.objects.get(id=request.POST.get('nome'))
+#         municipio = Municipio.objects.get(id=request.POST.get('municipio'))
     

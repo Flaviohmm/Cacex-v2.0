@@ -65,6 +65,68 @@
     {% endwith %}
   {% endfor %}
 
+  {% for registro in registros %}
+    {% with dias_restantes=registro.exibir_modal_prazo_vigencia.1 %}
+      {% if dias_restantes <= 30 %}
+        <!-- Modal -->
+        <div class="modal fade" id="notificationModal{{ registro.id }}" tabindex="-1" aria-labelledby="notificationModalLabel{{ registro.id }}" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="notificationModalLabel{{ registro.id }}">Notificação de Prazo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" data-custom-close-button="{{ registro.id }}">
+                  <span aria-hidden="true"></span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>O convênio {{ registro.num_convenio }} está com o prazo de vigência próximo do seu vencimento. Restam {{ dias_restantes }} dias.</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-next-modal="{{ registro.next_modal }}">Next</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-custom-close-button="{{ registro.id }}">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br>
+        <!-- Scripts adicionais para controle de modais -->
+        <script>
+          $('.modal-backdrop').remove();
+
+          var tableContainer = $('.table-container');
+
+          // Adiciona uma função de rolagem ao contêiner da tabela
+          tableContainer.scroll(function () {
+            var leftOffset = tableContainer.scrollLeft();
+            $('.col-fixed').css('left', leftOffset);
+          });
+
+          $(document).ready(function () {
+            var tableContainer = $('.table-container');
+
+            // Adiciona uma função de rolagem ao contêiner da tabela
+            tableContainer.scroll(function () {
+                var leftOffset = tableContainer.scrollLeft();
+                $('.col-fixed').css('left', leftOffset);
+            });
+
+            $(document).on('hidden.bs.modal', '.modal', function () {
+                // Remove o backdrop apenas se não houver próximo modal
+                var nextModalId = $(this).find('[data-next-modal]').data('next-modal');
+                
+                if (!nextModalId) {
+                    $('.modal-backdrop').remove();
+                }
+            });
+
+            // Inicializa todos os modais com id começando por "notificationModal"
+            $('[id^=notificationModal]').modal('show');
+          });
+        </script>
+      {% endif %}
+    {% endwith %}
+  {% endfor %}
+
   
   <div class="m-4">
     <h2>Adicionar Novo Registro</h2>

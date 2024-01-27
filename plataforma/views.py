@@ -909,11 +909,88 @@ def mostrar_registros_anexados(request):
 
     return render(request, 'tabela_anexados.html', context)
 
-# def adicionar_registro_rf(request):
-#     # Defina a localidade para o formato brasileiro
-#     locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+def adicionar_registro_rf(request):
+    # Defina a localidade para o formato brasileiro
+    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
-#     if request.method == 'POST':
-#         nome = Nome.objects.get(id=request.POST.get('nome'))
-#         municipio = Municipio.objects.get(id=request.POST.get('municipio'))
+    if request.method == 'POST':
+        nome = Nome.objects.get(id=request.POST.get('nome'))
+        municipio = Municipio.objects.get(id=request.POST.get('municipio'))
+        atividade = Atividade.objects.get(id=request.POST.get('atividade'))
+        num_parcelamento = request.POST.get('num_parcelamento')
+        objeto = request.POST.get('objeto')
+
+        # Configure a localidade para o formato brasileiro
+        locale.setlocale(locale.LC_NUMERIC, 'pt_BR.UTF-8')
+
+        # Remova caracteres não numéricos da string e converta para float
+        valor_total_str = request.POST.get('valor_total')
+        valor_total_limpo = ''.join(c for c in valor_total_str if c.isdigit() or c == '.' or c == ',')
+        valor_total = locale.atof(valor_total_limpo)
+
+        prazo_vigencia = request.POST.get('prazo_vigencia')
+        situacao = request.POST.get('situacao')
+        providencia = request.POST.get('providencia')
+
+        # Crie instâncias dos modelos relacionados...
+        registro_rf = RegistroReceitaFederal(
+            nome=nome,
+            municipio=municipio,
+            atividade=atividade,
+            num_parcelamento=num_parcelamento,
+            objeto=objeto,
+            valor_total=valor_total,
+            prazo_vigencia=prazo_vigencia,
+            situacao=situacao,
+            providencia=providencia,
+        )
+
+        # Salve o registro
+        registro_rf.save()
+
+        # Chame a função utilitária
+        exibir_modal, dias_restantes = exibir_modal_prazo_vigencia(registro_rf)
+
+        # Formate os valores usando a localidade definida
+        registro_rf.valor_total = locale.currency(valor_total, grouping=True)
+
+        return redirect('home')
+    
+    # Recupere as opções para os campos estrangeiros...
+    nomes = Nome.objects.all()
+    municipios = Municipio.objects.all()
+    atividades = Atividade.objects.all()
+    registros_rf = RegistroReceitaFederal.objects.all()
+
+    context = {
+        'nomes': nomes,
+        'municipios': municipios,
+        'atividades': atividades,
+        'messages': messages.get_messages(request),
+        'registros_rf': registros_rf, 
+    }
+
+    return render(request, 'adicionar_registro_rf.html', context)
+
+def visualizar_tabela_rf(request):
+    # Recupere dados para as listas suspensas
+    nomes = Nome.objects.all()
+    municipios = Municipio.objects.all()
+    atividades = Atividade.objects.all()
+
+    # Recupere todos os registros
+    registros_rf = RegistroReceitaFederal.objects.all()
+
+    # Criar o contexto com os dados
+    context = {
+        'nomes': nomes,
+        'municipios': municipios,
+        'atividades': atividades,
+        'registros_rf': registros_rf,
+    }
+
+    # Renderize o modelo com o contexto
+    return render(request, 'visualizar_tabela_rf.html', context)
+
+
     

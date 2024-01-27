@@ -184,6 +184,12 @@ class RegistroReceitaFederal(models.Model):
     situacao = models.CharField(max_length=255)
     providencia = models.CharField(max_length=255)
 
+    def exibir_modal_prazo_vigencia(self):
+        hoje = timezone.now().date()
+        prazo_vigencia = self.prazo_vigencia
+        dias_restantes = (prazo_vigencia - hoje).days
+        return dias_restantes <= 30, dias_restantes
+
     def save(self, *args, **kwargs):
         if not self.prazo_vigencia:
             raise ValueError("A data do prazo de vigência é obrigatório")

@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% load humanize %}
+
+{% load custom_filters %}
+
+{% block container %}
+  <style>
+    .table-container {
+      overflow: auto;
+      max-height: 650px; /* Ajuste conforme necessário para o tamanho desejado */
+    }
+  
+    .table-fixed {
+      width: auto;
+    }
+  
+    .thead-fixed th {
+      position: sticky;
+      top: 0;
+      background-color: #fff; /* Cor de fundo desejada */
+      z-index: 1;
+    }
+  
+    .col-fixed {
+      position: sticky;
+      left: 0;
+      background-color: #fff; /* Cor de fundo desejada */
+      z-index: 1;
+    }
+  </style>
+
+  <h3 class="m-4">Descrição de Registros da Receita Federal</h3>
+ 
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card bg-light ms-4 me-4 mb-4">
+        <div class="card-header">
+          <svg xmlns="http://www.w3.org/2000/svg" height="15" width="15" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V72c0-13.3-10.7-24-24-24H40zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zM16 232v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V232c0-13.3-10.7-24-24-24H40c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V392c0-13.3-10.7-24-24-24H40z"/></svg> 
+          Registro da Receita Federal
+        </div>
+        <div class="card-body">
+          <p class="card-text">
+            <div class="table-container table-responsive">
+              <table class='table table-hover'>
+                <thead class="thead-fixed sticky-top">
+                  <tr>
+                    <th scope="col-fixed">NOME</th>
+                    <th scope="col-fixed">MUNICÍPIO</th>
+                    <th scope="col-fixed">ATIVIDADE</th>
+                    <th scope="col-fixed">Nº DO PARCELAMENTO</th>
+                    <th scope="col-fixed">OBJETO</th>
+                    <th scope="col-fixed">VALOR TOTAL</th>
+                    <th scope="col-fixed">PRAZO DE VIGÊNCIA</th>
+                    <th scope="col-fixed">SITUAÇÃO</th>
+                    <th scope="col-fixed">PROVIDÊNCIA</th>  
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for registro_rf in registros_rf %}
+                    <tr>
+                      <td>{{ registro_rf.nome.nome }}</td>
+                      <td>{{ registro_rf.municipio.municipio }}</td>
+                      <td>{{ registro_rf.atividade.atividade }}</td>
+                      <td>{{ registro_rf.num_parcelamento }}</td>
+                      <td>{{ registro_rf.objeto }}</td>
+                      <td>{{ registro_rf.valor_total|format_currency }}</td>
+                      <td>{{ registro_rf.prazo_vigencia }}</td>
+                      <td>{{ registro_rf.situacao }}</td>
+                      <td>{{ registro_rf.providencia }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+              {% if registros_rf %}
+                <p class="m-4">Nº de Registros: {{ registros_rf.count }}</p>
+              {% else %}
+                <p>registros está vazio ou não está sendo passado corretamente.</p>
+              {% endif %}
+            </div>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div> 
+
+  <script>
+    $(document).ready(function () {
+      var tableContainer = $('.table-container');
+  
+      // Adicione uma função de rolagem ao contêiner da tabela
+      tableContainer.scroll(function () {
+        var leftOffset = tableContainer.scrollLeft();
+        $('.col-fixed').css('left', leftOffset);
+      });
+    });
+  </script>
+
+  
+  {% comment %} <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> {% endcomment %}
+  
+{% endblock container %}

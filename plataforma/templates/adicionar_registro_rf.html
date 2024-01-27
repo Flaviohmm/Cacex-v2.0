@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Adicionar Registro da Receita Federal{% endblock title %}
+
+{% block container %}
+  <div class="container mt-4">
+    <h1>Adicionar Registro da Receita Federal</h1>
+    <form action="{% url 'adicionar_registro_rf' %}" method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="nome">Nome:</label>
+          <select class="form-select" id="nome" name="nome">
+            {% for nome in nomes %}
+              <option value="{{ nome.id }}">{{ nome.nome }}</option>
+            {% endfor %}
+          </select><br>
+        </fieldset>
+      </div>
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="municipio">Município:</label>
+          <select class="form-select" id="municipio" name="municipio">
+            {% for municipio in municipios %}
+              <option value="{{ municipio.id }}">{{ municipio.municipio }}</option>
+            {% endfor %}
+          </select><br>
+        </fieldset>
+      </div>
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="atividade">Atividade:</label>
+          <select class="form-select" id="atividade" name="atividade">
+            {% for atividade in atividades %}
+              <option value="{{ atividade.id }}">{{ atividade.atividade }}</option>
+            {% endfor %}
+          </select><br>
+        </fieldset>
+      </div>
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="num_parcelamento">Nº do Parcelamento:</label>
+          <input class="form-control" type="text" placeholder="Nº do Parcelamento" name="num_parcelamento" required><br>
+        </fieldset>
+      </div>
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="objeto">Objeto:</label>
+          <input class="form-control" type="text" placeholder="Objeto" name="objeto" required><br>
+        </fieldset>
+      </div>
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="valor_total">Valor Total:</label>
+          <input class="form-control" type="text" placeholder="Valor Total" name="valor_total" id="valor_total" required><br>
+        </fieldset>
+      </div>
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="prazo_vigencia">Prazo de Vigência:</label>
+          <input class="form-control" type="date" name="prazo_vigencia" required><br>
+        </fieldset>
+      </div>
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="situacao">Situação:</label>
+          <input class="form-control" type="text" placeholder="Situação" name="situacao" required><br>
+        </fieldset>
+      </div>
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="providencia">Providência:</label>
+          <input class="form-control" type="text" placeholder="Providência" name="providencia" required><br>
+        </fieldset>
+      </div>
+      <button type="submit" class="btn btn-primary">Adicionar Registro</button>
+      <br>
+    </form>
+    <br>
+    <script>
+      // Adiciona a máscara ao campo de entrada
+      VMasker(document.getElementById("valor_total")).maskMoney({
+        precision: 2,
+        separator: ',',
+        delimiter: '.',
+        unit: 'R$',
+        zeroCents: false,
+      })
+    
+      // Adiciona um evento para formatar o valor quando o foco é perdido
+      document.getElementById("valor_total").addEventListener("blur", function() {
+        // Remove a máscara e formata o número usando Intl.NumberFormat
+        let unmaskedValue = VMasker.toNumber(this.value);
+        let formattedValue = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(unmaskedValue / 100);
+    
+        // Define o valor formatado de volta ao campo
+        this.value = formattedValue;
+      });
+    </script>
+  </div>
+{% endblock container %}

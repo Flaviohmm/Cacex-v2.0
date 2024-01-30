@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'autenticar',
     'plataforma',
     'plataforma.templatetags',
+    'paginas',
 ]
 
 MIDDLEWARE = [

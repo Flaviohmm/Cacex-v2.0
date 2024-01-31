@@ -209,4 +209,29 @@ class RegistroReceitaFederal(models.Model):
             f"{self.objeto} | {self.valor_total} | {self.prazo_vigencia} | {self.situacao} |"
             f"{self.providencia}"
         )
+    
+
+class RegistroFGTSIndCon(models.Model):
+    class Meta:
+        verbose_name_plural = "Tabela de FGTS, Individualização e Contabilidade"
+
+    competencia = models.CharField(max_length=255)
+    nome_empregado = models.CharField(max_length=255)
+    pis = models.IntegerField()
+    admissao = models.DateField()
+    afastamento = models.DateField()
+    cod_afastamento = models.IntegerField()
+    fgts = models.IntegerField()
+    gfip = models.IntegerField()
+    folha_de_pagamento = models.DecimalField(max_digits=10, decimal_places=2)
+    arbitrado = models.DecimalField(max_digits=10, decimal_places=2)
+    recomposto = models.DecimalField(max_digits=10, decimal_places=2)
+    rem_debito = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return (
+            f"{self.competencia} | {self.nome_empregado} | {self.pis} | {self.admissao} | {self.afastamento} | "
+            f"{self.cod_afastamento} | {self.fgts} | {self.gfip} | {self.folha_de_pagamento} | "
+            f"{self.arbitrado} | {self.recomposto} | {self.rem_debito} "
+        )
         

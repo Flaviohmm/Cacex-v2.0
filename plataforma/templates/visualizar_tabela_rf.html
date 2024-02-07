@@ -139,6 +139,7 @@
                   {% endif %}
                 {% endwith %}
               {% endfor %}
+              
               {% for registro in registros_rf %}
                 {% with dias_restantes=registro.exibir_modal_prazo_vigencia.1 %}
                   {% if dias_restantes <= 30 %}

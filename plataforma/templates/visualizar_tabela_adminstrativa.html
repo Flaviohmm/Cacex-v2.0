@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% load humanize %}
+
+{% load custom_filters %}
+
+{% block title %}Tabela Adminstrativa{% endblock title %}
+
+{% block container %}
+  <style>
+    .table-container {
+      overflow: auto;
+      max-height: 650px; /* Ajuste conforme necessário para o tamanho desejado */
+    }
+  
+    .table-fixed {
+      width: auto;
+    }
+  
+    .thead-fixed th {
+      position: sticky;
+      top: 0;
+      background-color: #fff; /* Cor de fundo desejada */
+      z-index: 1;
+    }
+  
+    .col-fixed {
+      position: sticky;
+      left: 0;
+      background-color: #fff; /* Cor de fundo desejada */
+      z-index: 1;
+    }
+  </style>
+
+  <h3 class="m-4">Descrição de Registros da Tabela Adminstrativa</h3>
+ 
+  <div class="row">
+    <div class="col-12">
+      <div class="card bg-light ms-4 me-4 mb-4">
+        <div class="card-header">
+          <svg xmlns="http://www.w3.org/2000/svg" height="15" width="15" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V72c0-13.3-10.7-24-24-24H40zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zM16 232v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V232c0-13.3-10.7-24-24-24H40c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V392c0-13.3-10.7-24-24-24H40z"/></svg> 
+          Registro da Tabela Adminstrativa
+        </div>
+        <div class="card-body">
+          <p class="card-text">
+            <div class="table-container table-responsive">
+              <table class='table table-hover'>
+                <thead class="thead-fixed sticky-top">
+                  <tr>
+                    <th rowspan="2">Municípios</th>
+                    <th rowspan="2">Vigência</th>
+                    <th colspan="3" style="text-align: center;">Na Prefeitura</th>
+                    <th style="text-align: center;">Na CACEX</th>
+                    <th colspan="2" style="text-align: center;">Na Pref</th>
+                  </tr>
+                  <tr>
+                    <th colspan="2" style="text-align: center;">Nº do Contrato</th>
+                    <th style="text-align: center;">Publicação Femurn</th>
+                    <th rowspan="2" colspan="2" style="text-align: center;">Contra Assinado</th>
+                  </tr>
+                  
+                  
+                </thead>
+                <tbody>
+                  {% for registro in registros %}
+                    <tr>
+                      <td>Rio Fogo</td>
+                      <td>20/10/24</td>
+                      <td colspan="2" style="text-align: center;">N°001/2019</td>
+                      <td style="text-align: center;">Publicado IV Aditivo</td>
+                      <td style="text-align: center;">ok</td>
+                      <td style="text-align: center;">ok</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+              {% if registros %}
+                <p class="m-4">Nº de Registros: {{ registros.count }}</p>
+              {% else %}
+                <p>registros está vazio ou não está sendo passado corretamente.</p>
+              {% endif %}
+
+              <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+              {% for registro in registros %}
+                {% with dias_restantes=registro.exibir_modal_prazo_vigencia.1 %}
+                  {% if dias_restantes <= 30 %}
+                    <!-- Modal -->
+                    <div class="modal fade" id="notificationModal{{ registro.id }}" tabindex="-1" aria-labelledby="notificationModalLabel{{ registro.id }}" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="notificationModalLabel{{ registro.id }}">Notificação de Prazo</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" data-custom-close-button="{{ registro.id }}">
+                              <span aria-hidden="true"></span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <p>O prazo de vigência está próximo do seu vencimento. Restam {{ dias_restantes }} dias.</p>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-next-modal="{{ registro.next_modal }}">Next</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-custom-close-button="{{ registro.id }}">Close</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Scripts adicionais para controle de modais -->
+                    <script>
+                      $(document).ready(function () {
+                        // Adiciona evento ao botão "Close" para chamar a função de remoção do backdrop
+                        $('button[data-custom-close-button]').on('click', function () {
+                          // Oculta o modal antes de remover o backdrop
+                          var modalId = $(this).data('custom-close-button');
+                          $('#notificationModal' + modalId).modal('hide');
+                        });
+
+                        // Adiciona evento para quando o modal for totalmente fechado
+                        $('body').on('hidden.bs.modal', '.modal', function () {
+                          // Remove o backdrop
+                          $('.modal-backdrop').remove();
+
+                          // Obtém o ID do próximo modal a ser exibido
+                          var nextModalId = $(this).find('[data-next-modal]').data('next-modal');
+                      
+                          // Verifica se há um próximo modal e o exibe
+                          if (nextModalId) {
+                            $('#' + nextModalId).modal('show');
+                          }
+                        });
+
+                        // Inicializa todos os modais com id começando por "notificationModal"
+                        $('[id^=notificationModal]').modal('show');
+                      });
+                    </script>
+                  {% endif %}
+                {% endwith %}
+              {% endfor %}
+              
+              {% for registro in registros %}
+                {% with dias_restantes=registro.exibir_modal_prazo_vigencia.1 %}
+                  {% if dias_restantes <= 30 %}
+                    <!-- Modal -->
+                    <div class="modal fade" id="notificationModal{{ registro.id }}" tabindex="-1" aria-labelledby="notificationModalLabel{{ registro.id }}" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="notificationModalLabel{{ registro.id }}">Notificação de Prazo</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" data-custom-close-button="{{ registro.id }}">
+                              <span aria-hidden="true"></span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            <p>O prazo de vigência está próximo do seu vencimento. Restam {{ dias_restantes }} dias.</p>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-next-modal="{{ registro.next_modal }}">Next</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-custom-close-button="{{ registro.id }}">Close</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Scripts adicionais para controle de modais -->
+                    <script>
+                      $(document).ready(function () {
+                        // Adiciona evento ao botão "Close" para chamar a função de remoção do backdrop
+                        $('button[data-custom-close-button]').on('click', function () {
+                          // Oculta o modal antes de remover o backdrop
+                          var modalId = $(this).data('custom-close-button');
+                          $('#notificationModal' + modalId).modal('hide');
+                        });
+
+                        // Adiciona evento para quando o modal for totalmente fechado
+                        $('body').on('hidden.bs.modal', '.modal', function () {
+                          // Remove o backdrop
+                          $('.modal-backdrop').remove();
+
+                          // Obtém o ID do próximo modal a ser exibido
+                          var nextModalId = $(this).find('[data-next-modal]').data('next-modal');
+                      
+                          // Verifica se há um próximo modal e o exibe
+                          if (nextModalId) {
+                            $('#' + nextModalId).modal('show');
+                          }
+                        });
+
+                        // Inicializa todos os modais com id começando por "notificationModal"
+                        $('[id^=notificationModal]').modal('show');
+                      });
+                    </script>
+                  {% endif %}
+                {% endwith %}
+              {% endfor %}
+            </div>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div> 
+
+  <script>
+    $(document).ready(function () {
+      var tableContainer = $('.table-container');
+  
+      // Adicione uma função de rolagem ao contêiner da tabela
+      tableContainer.scroll(function () {
+        var leftOffset = tableContainer.scrollLeft();
+        $('.col-fixed').css('left', leftOffset);
+      });
+    });
+  </script>
+
+  
+  {% comment %} 
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> 
+  {% endcomment %}
+
+{% endblock container %}

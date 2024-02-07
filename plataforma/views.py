@@ -14,6 +14,7 @@ from .models import (
     Historico,
     RegistroReceitaFederal,
     RegistroFGTSIndCon,
+    RegistroAdminstracao,
 )
 from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
 import locale
@@ -1074,4 +1075,45 @@ def visualizar_tabela_fic(request):
     return render(request, 'visualizar_tabela_fic.html', context)
 
 
+def adicionar_registro_administrativo(request):
+    if request.method == 'POST':
+        municipio = Municipio.objects.get(id=request.POST.get('municipio'))
+        prazo_vigencia = request.POST.get('prazo_vigencia')
+        num_contrato = request.POST.get('num_contrato')
+        pub_femurn = request.POST.get('pub_femurn')
+        na_cacex = 'na_cacex' in request.POST
+        na_prefeitura = 'na_prefeitura' in request.POST
+
+        registros = RegistroAdminstracao(
+            municipio=municipio,
+            prazo_vigencia=prazo_vigencia,
+            num_contrato=num_contrato,
+            pub_femurn=pub_femurn,
+            na_cacex=na_cacex,
+            na_prefeitura=na_prefeitura,
+        )
+
+        registros.save()
+
+        return redirect('inicio') 
+      
     
+    municipios = Municipio.objects.all()
+    registros = RegistroReceitaFederal.objects.all()
+
+    context = {
+        'messages': messages.get_messages(request),
+        'municipios': municipios,
+        'registros': registros,
+    }
+
+    return render(request, 'adicionar_registro_adminstrativo.html', context)
+
+def visualizar_tabela_adminstrativa(request):
+    registros = RegistroAdminstracao.objects.all()
+
+    context = {
+        'registros': registros,
+    }
+
+    return render(request, 'visualizar_tabela_adminstrativa.html', context)

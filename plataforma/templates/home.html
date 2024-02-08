@@ -26,7 +26,11 @@
                 </button>
               </div>
               <div class="modal-body">
-                <p>O convênio {{ registro.num_convenio }} está com o prazo de vigência próximo do seu vencimento. Restam {{ dias_restantes }} dias.</p>
+                {% if dias_restantes > 0 %}
+                  O convênio {{ registro.num_convenio }} está com o prazo de vigência próximo do seu vencimento. Restam {{ dias_restantes }} dias.
+                {% else %}
+                  O convênio {{ registro.num_convenio }} está com o prazo de vigência vencido.
+                {% endif %}
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-next-modal="{{ registro.next_modal }}">Next</button>
@@ -81,7 +85,11 @@
                 </button>
               </div>
               <div class="modal-body">
-                <p>O convênio {{ registro.num_convenio }} está com o prazo de vigência próximo do seu vencimento. Restam {{ dias_restantes }} dias.</p>
+                {% if dias_restantes > 0 %}
+                  O convênio {{ registro.num_convenio }} está com o prazo de vigência próximo do seu vencimento. Restam {{ dias_restantes }} dias.
+                {% else %}
+                  O convênio {{ registro.num_convenio }} está com o prazo de vigência vencido.
+                {% endif %}
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-next-modal="{{ registro.next_modal }}">Next</button>

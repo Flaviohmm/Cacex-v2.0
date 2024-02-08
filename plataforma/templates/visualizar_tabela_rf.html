@@ -99,7 +99,11 @@
                             </button>
                           </div>
                           <div class="modal-body">
-                            <p>O prazo de vigência está próximo do seu vencimento. Restam {{ dias_restantes }} dias.</p>
+                            {% if dias_restantes > 0 %}
+                              O prazo de vigência está próximo do seu vencimento. Restam {{ dias_restantes }} dias.
+                            {% else %}
+                              O prazo de vigência está vencido.
+                            {% endif %}
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-next-modal="{{ registro.next_modal }}">Next</button>
@@ -154,7 +158,11 @@
                             </button>
                           </div>
                           <div class="modal-body">
-                            <p>O prazo de vigência está próximo do seu vencimento. Restam {{ dias_restantes }} dias.</p>
+                            {% if dias_restantes > 0 %}
+                              O prazo de vigência está próximo do seu vencimento. Restam {{ dias_restantes }} dias.
+                            {% else %}
+                              O prazo de vigência está vencido.
+                            {% endif %}
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-next-modal="{{ registro.next_modal }}">Next</button>

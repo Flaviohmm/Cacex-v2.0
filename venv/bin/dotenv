@@ -1,4 +1,4 @@
-#!/home/cacex/Documentos/Projects/CacexV2-20240207T114557Z-001/CacexV2/venv/bin/python3
+#!/home/flavio/Documentos/projeto_django/CacexV2/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys

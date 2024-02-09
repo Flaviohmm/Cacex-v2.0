@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Adicionar Registro Adminstrativo{% endblock title %}
+
+{% block container %}
+  <div class="container mt-4">
+    <h1>Adicionar Registro Adminstrativo</h1>
+    <form action="{% url 'adicionar_registro_adminstrativo' %}" method="post">
+      {% csrf_token %}          
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="municipio">Município:</label>
+          <select class="form-select" id="municipio" name="municipio">
+            {% for municipio in municipios %}
+              <option value="{{ municipio.id }}">{{ municipio.municipio }}</option>
+            {% endfor %}
+          </select><br>
+        </fieldset>
+      </div>
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="prazo_vigencia">Prazo de Vigência:</label>
+          <input class="form-control" type="date" name="prazo_vigencia" required><br>
+        </fieldset>
+      </div>
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="num_contrato">Número do Contrato</label>
+          <input class="form-control" type="text" placeholder="Nº do Contrato" name="num_contrato" required><br>
+        </fieldset>
+      </div>
+      <div class="form-group">
+        <fieldset>
+          <label class="form-label mt-4" for="pub_femurn">Publicação FEMURN:</label>
+          <input class="form-control" type="text" placeholder="Publicação FEMURN" name="pub_femurn" required><br>
+        </fieldset>
+      </div>
+      <div class="form-group">
+        <fieldset class="form-group">
+          <legend class="mt-4">Na CACEX:</legend>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="na_cacex_{{ forloop.counter }}" name="na_cacex" value="true" {% if registro.na_cacex %}checked{% endif %}>
+            <label class="form-check-label" for="na_cacex_{{ forloop.counter }}">{{ registro.na_cacex|yesno:"F,OK" }}</label>
+          </div>
+        </fieldset>
+      </div>
+      <div class="form-group">
+        <fieldset class="form-group">
+          <legend class="mt-4">Na Prefeitura:</legend>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="na_prefeitura_{{ forloop.counter }}" name="na_prefeitura" value="true" {% if registro.na_prefeitura %}checked{% endif %}>
+            <label class="form-check-label" for="na_prefeitura_{{ forloop.counter }}">{{ registro.na_prefeitura|yesno:"F,OK" }}</label>
+          </div>
+        </fieldset>
+      </div>
+      <br>
+      <button type="submit" class="btn btn-primary">Adicionar Registro</button>
+      <br>
+    </form>
+    <br>
+  </div>
+{% endblock container %}

@@ -234,4 +234,40 @@ class RegistroFGTSIndCon(models.Model):
             f"{self.cod_afastamento} | {self.fgts} | {self.gfip} | {self.folha_de_pagamento} | "
             f"{self.arbitrado} | {self.recomposto} | {self.rem_debito} "
         )
+    
+
+class RegistroAdminstracao(models.Model):
+    class Meta:
+        verbose_name_plural = "Tabela Adminstrativa" 
+
+    municipio = models.ForeignKey(Municipio, on_delete=models.CASCADE)  
+    prazo_vigencia = models.DateField()
+    num_contrato = models.CharField(max_length=255)
+    pub_femurn = models.CharField(max_length=255)
+    na_cacex = models.BooleanField(default=False)
+    na_prefeitura = models.BooleanField(default=False)  
+
+    def exibir_modal_prazo_vigencia(self):
+        hoje = timezone.now().date()
+        prazo_vigencia = self.prazo_vigencia
+        dias_restantes = (prazo_vigencia - hoje).days
+        return dias_restantes <= 30, dias_restantes
+
+    def save(self, *args, **kwargs):
+        if not self.prazo_vigencia:
+            raise ValueError("A data do prazo de vigência é obrigatório")
         
+        if self.prazo_vigencia and isinstance(self.prazo_vigencia, str) and self.prazo_vigencia.strip():  # Verifica se a string não está vazia após remoção de espaços
+            try:
+                # Converta a string para objeto date
+                self.prazo_vigencia = datetime.strptime(self.prazo_vigencia, '%Y-%m-%d').date()
+            except ValueError:
+                raise ValidationError("Formato de data inválido para prazo de vigência. Deve ser no formato YYYY-MM-DD.")
+            
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return (
+            f"{self.municipio.municipio} | {self.prazo_vigencia} | {self.num_contrato} | " 
+            f"{self.pub_femurn} | {self.na_cacex} | {self.na_prefeitura}"
+        )  

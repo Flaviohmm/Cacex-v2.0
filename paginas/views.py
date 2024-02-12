@@ -1,9 +1,9 @@
 from django.shortcuts import render
-from plataforma.models import RegistroFuncionarios, Status, Setor
+from plataforma.models import RegistroFuncionarios, Status, Setor, Atividade
 from django.db.models import Count
 
 
-def base_admin(request):
+def grafico_geral(request):
     registros = RegistroFuncionarios.objects.all()
     status_total = (
         registros.filter(status=Status.CONCLUIDO).count() + 
@@ -25,6 +25,8 @@ def base_admin(request):
 
     orgaos_setores = Setor.objects.all()
 
+    atividades = Atividade.objects.all()
+
     # Recupere a contagem de registros para cada orgao_setor
     contagem_por_orgao_setor = RegistroFuncionarios.objects.values('orgao_setor__orgao_setor').annotate(contagem=Count('orgao_setor'))
 
@@ -32,9 +34,15 @@ def base_admin(request):
     orgaos_setor_labels = [item['orgao_setor__orgao_setor'] for item in contagem_por_orgao_setor]
     contagem_registros = [item['contagem'] for item in contagem_por_orgao_setor]
 
-    # Exibir as listas
-    print(orgaos_setor_labels)
-    print(contagem_registros)
+    # Recupere a contagem de registros para cada atividade
+    contagem_por_atividade = RegistroFuncionarios.objects.values('atividade__atividade').annotate(contagem=Count('atividade'))
+
+    # Transforme os resultados em listas separadas
+    atividades_labels = [item['atividade__atividade'] for item in contagem_por_atividade]
+    contagem_atividades = [item['contagem'] for item in contagem_por_atividade]
+
+    print(atividades_labels)
+    print(contagem_atividades)
 
     context = {
         'orgaos_setores': orgaos_setores,
@@ -47,6 +55,8 @@ def base_admin(request):
         'registros_suspensos': registros_suspensos,
         'orgaos_setor_labels': orgaos_setor_labels,
         'contagem_registros': contagem_registros,
+        'atividades_labels': atividades_labels,
+        'contagem_atividades': contagem_atividades,
     }
 
     return render(request, 'tb_geral.html', context)

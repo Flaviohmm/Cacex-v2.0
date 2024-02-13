@@ -3,25 +3,14 @@
 {% load static %}
 
 {% block container %}
+<!-- Adicione esta linha no cabeçalho do seu arquivo HTML -->
   <div id="container" class="container-fluid">
 
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-        <a id="downloadButton" href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+        <a href="{% url 'gerador_pdf_tb_geral' %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
             class="fas fa-download fa-sm text-white-50"></i> Download</a>
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-
-        <script>
-            document.getElementById('downloadButton').addEventListener('click', function () {
-                var pdf = new jsPDF();
-                pdf.fromHTML(document.getElementById('container').innerHTML, 15, 15, {
-                    width: 170
-                });
-                pdf.save('dashboard.pdf');
-            });
-        </script>
     </div>
 
     <!-- Content Row -->

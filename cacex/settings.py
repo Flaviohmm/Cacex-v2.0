@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-3uq)bw9*x&e9_uwgzi%5%gs)ed23h8c10vj(0*^0-uo8dlrt(f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['cacex-764d42d11b4b.herokuapp.com']
+ALLOWED_HOSTS = ['cacex-764d42d11b4b.herokuapp.com', '127.0.0.1']
 
 
 # Application definition
@@ -58,7 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'cacex.urls'
@@ -135,6 +135,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'templates/static'),)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_ROOT = BASE_DIR/"staticfiles"
 
 MEDIA_URL = '/media/'

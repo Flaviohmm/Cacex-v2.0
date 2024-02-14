@@ -87,7 +87,7 @@ WSGI_APPLICATION = 'cacex.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': config('DB_ENGINE'),
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': config('DB_NAME'),
         'USER': 'postgres',
         'PASSWORD': config('DB_PASSWORD'),

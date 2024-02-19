@@ -58,8 +58,8 @@
                 {% endif %}
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-next-modal="{{ registro.next_modal }}">Next</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-custom-close-button="{{ registro.id }}">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-next-modal="{{ registro.next_modal }}">Próximo</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-custom-close-button="{{ registro.id }}">Fechar</button>
               </div>
             </div>
           </div>
@@ -117,8 +117,8 @@
                 {% endif %}
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-next-modal="{{ registro.next_modal }}">Next</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-custom-close-button="{{ registro.id }}">Close</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-next-modal="{{ registro.next_modal }}">Próximo</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-custom-close-button="{{ registro.id }}">Fechar</button>
               </div>
             </div>
           </div>
@@ -289,14 +289,26 @@
                       <td>{{ registro.calcular_valores.0|format_currency }}</td>
                       <td>{{ registro.valor_liberado|format_currency }}</td>
                       <td>{{ registro.calcular_valores.1|format_currency }}</td>
-                      <td>{{ registro.prazo_vigencia }}</td>
+                      <td>{{ registro.prazo_vigencia|formatar_data }}</td>
                       <td>{{ registro.situacao }}</td>
                       <td>{{ registro.providencia }}</td>
-                      <td>{{ registro.status }}</td>
-                      <td>{{ registro.data_recepcao }}</td>
+
+                      {% if registro.status == 'Concluído' %}
+                        <td class="table-success">{{ registro.status }}</td>
+                      {% elif registro.status == 'Pendente' %}
+                        <td class="table-danger">{{ registro.status }}</td>
+                      {% elif registro.status == 'Suspenso' %}
+                        <td class="table-dark">{{ registro.status }}</td>
+                      {% elif registro.status == 'Não Iniciado' %}
+                        <td class="table-info">{{ registro.status }}</td>
+                      {% elif registro.status == 'Em Análise' %}
+                        <td class="table-warning">{{ registro.status }}</td>
+                      {% endif %}
+
+                      <td>{{ registro.data_recepcao|formatar_data }}</td>
                       <td>
                         {% if registro.data_inicio %}
-                            {{ registro.data_inicio }}
+                            {{ registro.data_inicio|formatar_data }}
                         {% else %}
                             Sem data de início
                         {% endif %}
@@ -305,7 +317,7 @@
                       <td>{% if registro.documento_cancelado %}Sim{% else %}Não{% endif %}</td>
                       <td>
                         {% if registro.data_fim %}
-                            {{ registro.data_fim }}
+                            {{ registro.data_fim|formatar_data }}
                         {% else %}
                             Sem data de término
                         {% endif %}

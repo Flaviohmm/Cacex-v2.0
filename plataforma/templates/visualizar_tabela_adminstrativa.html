@@ -67,7 +67,7 @@
                   {% for registro in registros %}
                     <tr {% if registro.exibir_modal_prazo_vigencia.1 <= 30 and registro.exibir_modal_prazo_vigencia.1 >= 0 %}class="table-warning"{% endif %} {% if registro.na_cacex == True and registro.na_prefeitura == True %}class="table-success"{% else %}class="table-danger"{% endif %}>
                       <td>{{ registro.municipio.municipio }}</td>
-                      <td>{{ registro.prazo_vigencia }}</td>
+                      <td>{{ registro.prazo_vigencia|formatar_data }}</td>
                       <td colspan="2" style="text-align: center;">{{ registro.num_contrato }}</td>
                       <td style="text-align: center;">{{ registro.pub_femurn }}</td>
                       <td style="text-align: center;">{% if registro.na_cacex %}OK{% else %}F{% endif %}</td>
@@ -106,8 +106,8 @@
                             {% endif %}
                           </div>
                           <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-next-modal="{{ registro.next_modal }}">Next</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-custom-close-button="{{ registro.id }}">Close</button>
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-next-modal="{{ registro.next_modal }}">Próximo</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-custom-close-button="{{ registro.id }}">Fechar</button>
                           </div>
                         </div>
                       </div>
@@ -165,8 +165,8 @@
                             {% endif %}
                           </div>
                           <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-next-modal="{{ registro.next_modal }}">Next</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-custom-close-button="{{ registro.id }}">Close</button>
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-next-modal="{{ registro.next_modal }}">Próximo</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-custom-close-button="{{ registro.id }}">Fechar</button>
                           </div>
                         </div>
                       </div>

@@ -172,14 +172,26 @@
                       <td>{{ registro.calcular_valores.0|format_currency }}</td>
                       <td>{{ registro.valor_liberado|format_currency }}</td>
                       <td>{{ registro.calcular_valores.1|format_currency }}</td>
-                      <td>{{ registro.prazo_vigencia }}</td>
+                      <td>{{ registro.prazo_vigencia|formatar_data }}</td>
                       <td>{{ registro.situacao }}</td>
                       <td>{{ registro.providencia }}</td>
-                      <td>{{ registro.status }}</td>
-                      <td>{{ registro.data_recepcao }}</td>
+
+                      {% if registro.status == 'Concluído' %}
+                        <td class="table-success">{{ registro.status }}</td>
+                      {% elif registro.status == 'Pendente' %}
+                        <td class="table-danger">{{ registro.status }}</td>
+                      {% elif registro.status == 'Suspenso' %}
+                        <td class="table-dark">{{ registro.status }}</td>
+                      {% elif registro.status == 'Não Iniciado' %}
+                        <td class="table-info">{{ registro.status }}</td>
+                      {% elif registro.status == 'Em Análise' %}
+                        <td class="table-warning">{{ registro.status }}</td>
+                      {% endif %}
+                      
+                      <td>{{ registro.data_recepcao|formatar_data }}</td>
                       <td>
                         {% if registro.data_inicio %}
-                            {{ registro.data_inicio }}
+                            {{ registro.data_inicio|formatar_data }}
                         {% else %}
                             Sem data de início
                         {% endif %}
@@ -188,7 +200,7 @@
                       <td>{% if registro.documento_cancelado %}Sim{% else %}Não{% endif %}</td>
                       <td>
                         {% if registro.data_fim %}
-                            {{ registro.data_fim }}
+                            {{ registro.data_fim|formatar_data }}
                         {% else %}
                             Sem data de término
                         {% endif %}
@@ -227,15 +239,15 @@
 
                                 <p><strong>Valor Liberado:</strong> {{ registro.valor_liberado|format_currency }}</p>
                                 <p><strong>Falta Liberar:</strong> {{ registro.calcular_valores.1|format_currency }}</p>
-                                <p><strong>Prazo de Vigência:</strong> {{ registro.prazo_vigencia }}</p>
+                                <p><strong>Prazo de Vigência:</strong> {{ registro.prazo_vigencia|formatar_data }}</p>
                                 <p><strong>Situação:</strong> {{ registro.situacao }}</p>
                                 <p><strong>Providência:</strong> {{ registro.providencia }}</p>
 
                                 <p><strong>Status:</strong> {{ registro.status }}</p>
-                                <p><strong>Data de Recepção:</strong> {{ registro.data_recepcao }}</p>
-                                <p><strong>Data de Inicio:</strong> {% if registro.data_inicio %}{{ registro.data_inicio }}{% else %}Sem data de término{% endif %}</p>
+                                <p><strong>Data de Recepção:</strong> {{ registro.data_recepcao|formatar_data }}</p>
+                                <p><strong>Data de Inicio:</strong> {% if registro.data_inicio %}{{ registro.data_inicio|formatar_data }}{% else %}Sem data de término{% endif %}</p>
                                 
-                                <p><strong>Data de Término:</strong> {% if registro.data_fim %}{{ registro.data_fim }}{% else %}Sem data de término{% endif %}</p>
+                                <p><strong>Data de Término:</strong> {% if registro.data_fim %}{{ registro.data_fim|formatar_data }}{% else %}Sem data de término{% endif %}</p>
                                 <p><strong>Dias de Trabalho Total:</strong> {{ registro.dia_trabalho_total }}</p>
                               </div>
                               <div class="modal-footer">

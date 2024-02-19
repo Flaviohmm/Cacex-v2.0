@@ -4,6 +4,9 @@ from django.contrib import messages
 from django.contrib.messages import constants
 from django.utils import timezone
 from django.utils.dateparse import parse_date
+from django.db.utils import DataError
+from django.core.exceptions import ValidationError
+from django.http import HttpResponse
 from datetime import datetime
 from .models import (
     RegistroFuncionarios, 
@@ -44,6 +47,9 @@ def home(request):
 @login_required(login_url='/auth/login')
 def inicio(request):
     return render(request, 'inicio.html')
+
+def adicionar(request):
+    return render(request, 'adicionar.html')
 
 def adicionar_nome(request):
     if request.method == 'POST':
@@ -998,61 +1004,67 @@ def adicionar_registro_fgts_ind_con(request):
     locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
     if request.method == 'POST':
-        competencia = request.POST.get('competencia')
-        nome_empregado = request.POST.get('nome_empregado')
-        pis = request.POST.get('pis')
-        admissao = request.POST.get('admissao')
-        afastamento = request.POST.get('afastamento')
-        cod_afastamento = request.POST.get('cod_afastamento')
-        fgts = request.POST.get('fgts')
-        gfip = request.POST.get('gfip')
+        try:
+            competencia = request.POST.get('competencia')
+            nome_empregado = request.POST.get('nome_empregado')
+            pis = request.POST.get('pis')
+            admissao = request.POST.get('admissao')
+            afastamento = request.POST.get('afastamento')
+            cod_afastamento = request.POST.get('cod_afastamento')
+            fgts = request.POST.get('fgts')
+            gfip = request.POST.get('gfip')
 
-        # Configure a localidade para o formato brasileiro
-        locale.setlocale(locale.LC_NUMERIC, 'pt_BR.UTF-8')
+            # Configure a localidade para o formato brasileiro
+            locale.setlocale(locale.LC_NUMERIC, 'pt_BR.UTF-8')
 
-        # Remova caracteres não numéricos da string e converta para float
-        folha_de_pagamento_str = request.POST.get('folha_de_pagamento')
-        folha_de_pagamento_limpo = ''.join(c for c in folha_de_pagamento_str if c.isdigit() or c == '.' or c == ',')
-        folha_de_pagamento = locale.atof(folha_de_pagamento_limpo)
+            # Remova caracteres não numéricos da string e converta para float
+            folha_de_pagamento_str = request.POST.get('folha_de_pagamento')
+            folha_de_pagamento_limpo = ''.join(c for c in folha_de_pagamento_str if c.isdigit() or c == '.' or c == ',')
+            folha_de_pagamento = locale.atof(folha_de_pagamento_limpo)
 
-        arbitrado_str = request.POST.get('arbitrado')
-        arbitrado_limpo = ''.join(c for c in arbitrado_str if c.isdigit() or c == '.' or c == ',')
-        arbitrado = locale.atof(arbitrado_limpo)
+            arbitrado_str = request.POST.get('arbitrado')
+            arbitrado_limpo = ''.join(c for c in arbitrado_str if c.isdigit() or c == '.' or c == ',')
+            arbitrado = locale.atof(arbitrado_limpo)
 
-        recomposto_str = request.POST.get('recomposto')
-        recomposto_limpo = ''.join(c for c in recomposto_str if c.isdigit() or c == '.' or c == ',')
-        recomposto = locale.atof(recomposto_limpo)
+            recomposto_str = request.POST.get('recomposto')
+            recomposto_limpo = ''.join(c for c in recomposto_str if c.isdigit() or c == '.' or c == ',')
+            recomposto = locale.atof(recomposto_limpo)
 
-        rem_debito_str = request.POST.get('rem_debito')
-        rem_debito_limpo = ''.join(c for c in rem_debito_str if c.isdigit() or c == '.' or c == ',')
-        rem_debito = locale.atof(rem_debito_limpo)
+            rem_debito_str = request.POST.get('rem_debito')
+            rem_debito_limpo = ''.join(c for c in rem_debito_str if c.isdigit() or c == '.' or c == ',')
+            rem_debito = locale.atof(rem_debito_limpo)
+            
+            # Crie instâncias dos modelos relacionados...
+
+            registro = RegistroFGTSIndCon(
+                competencia=competencia,
+                nome_empregado=nome_empregado,
+                pis=pis,
+                admissao=admissao,
+                afastamento=afastamento,
+                cod_afastamento=cod_afastamento,
+                fgts=fgts,
+                gfip=gfip,
+                folha_de_pagamento=folha_de_pagamento,
+                arbitrado=arbitrado,
+                recomposto=recomposto,
+                rem_debito=rem_debito,
+            )
+
+            registro.save()
+
+            # Formate os valores usando a localidade definida
+            registro.folha_de_pagamento = locale.currency(folha_de_pagamento, grouping=True)
+            registro.arbitrado = locale.currency(arbitrado, grouping=True)
+            registro.recomposto = locale.currency(recomposto, grouping=True)
+            registro.rem_debito = locale.currency(rem_debito, grouping=True)
+
+            return redirect('inicio')
         
-        # Crie instâncias dos modelos relacionados...
-
-        registro = RegistroFGTSIndCon(
-            competencia=competencia,
-            nome_empregado=nome_empregado,
-            pis=pis,
-            admissao=admissao,
-            afastamento=afastamento,
-            cod_afastamento=cod_afastamento,
-            fgts=fgts,
-            gfip=gfip,
-            folha_de_pagamento=folha_de_pagamento,
-            arbitrado=arbitrado,
-            recomposto=recomposto,
-            rem_debito=rem_debito,
-        )
-
-        registro.save()
-
-        # Formate os valores usando a localidade definida
-        registro.folha_de_pagamento = locale.currency(folha_de_pagamento, grouping=True)
-        registro.arbitrado = locale.currency(arbitrado, grouping=True)
-        registro.recomposto = locale.currency(recomposto, grouping=True)
-        registro.rem_debito = locale.currency(rem_debito, grouping=True)
-
-        return redirect('inicio')
+        except (DataError, ValidationError) as e:
+            # Se ocorrer um erro de dados (como um PIS inválido), você pode tratar aqui
+            error_message = f"Erro ao salvar o registro: {str(e)}"
+            return HttpResponse(error_message, status=400) 
     
     # Recuperar campos
     registros = RegistroFGTSIndCon.objects.all()

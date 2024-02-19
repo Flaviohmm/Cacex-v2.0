@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.utils import timezone
@@ -73,7 +74,7 @@ class RegistroFuncionarios(models.Model):
     def calcular_valores(self):
         # Converter os valores para decimais
         valor_total = Decimal(str(self.oge_ogu)) + Decimal(str(self.cp_prefeitura))
-        falta_liberar = valor_total - Decimal(str(self.valor_liberado))
+        falta_liberar = Decimal(str(self.oge_ogu)) - Decimal(str(self.valor_liberado))
 
         # Calcular o Valor Total e Falta Liberar
         return valor_total, falta_liberar
@@ -217,7 +218,12 @@ class RegistroFGTSIndCon(models.Model):
 
     competencia = models.CharField(max_length=255)
     nome_empregado = models.CharField(max_length=255)
-    pis = models.IntegerField()
+    pis = models.BigIntegerField(
+        validators=[
+            MaxValueValidator(99999999999),  # Valor máximo de 11 dígitos
+            MinValueValidator(10000000000)   # Valor mínimo de 11 dígitos
+        ]
+    )
     admissao = models.DateField()
     afastamento = models.DateField()
     cod_afastamento = models.IntegerField()

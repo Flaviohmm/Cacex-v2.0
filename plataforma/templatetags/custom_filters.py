@@ -1,6 +1,7 @@
 from django import template
 from datetime import datetime, date
 import locale
+import re
 
 register = template.Library()
 
@@ -26,3 +27,17 @@ def formatar_data(value):
         # Se value for uma string, converter para objeto de data e depois formatar
         data_obj = datetime.strptime(value, '%d de %B de %Y')
         return data_obj.strftime('%d/%m/%Y')
+    
+
+@register.filter(name='formatar_pis')
+def formatar_pis(pis):
+
+    pis_str = str(pis)
+
+    # Remove caracteres não numéricos
+    numeros = re.sub(r'\D', '', pis_str)
+
+    # Adiciona a máscara
+    formatted_pis = re.sub(r'(\d{3})(\d{5})(\d{2})(\d{1})$', r'\1.\2.\3-\4', numeros)
+
+    return formatted_pis

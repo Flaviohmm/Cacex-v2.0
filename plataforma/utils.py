@@ -7,7 +7,7 @@ import numpy as np
 def calcular_valores(registro):
     # Converter os valores para decimais
     valor_total = Decimal(str(registro.oge_ogu)) + Decimal(str(registro.cp_prefeitura))
-    falta_liberar = valor_total - Decimal(str(registro.valor_liberado))
+    falta_liberar = Decimal(str(registro.oge_ogu)) - Decimal(str(registro.valor_liberado))
 
     # Calcular o Valor Total e Falta Liberar
     return valor_total, falta_liberar

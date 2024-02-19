@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Adicionar{% endblock title %}
+
+{% block container %}
+  <div class="m-4">
+    <h2>Adicionar Novo Registro Geral</h2>
+    <a href="{% url 'adicionar_registro' %}" class="btn btn-primary">Adicionar Novo Registro Geral</a>
+  </div>
+  <div class="m-4">
+    <h2>Adicionar Novo Registro da Receita Federal</h2>
+    <a href="{% url 'adicionar_registro_rf' %}" class="btn btn-primary">Adicionar Novo Registro da Receita Federal</a>
+  </div>
+  <div class="m-4">
+    <h2>Adicionar Novo Registro do FGTS, Individualização e/ou Contabilidade</h2>
+    <a href="{% url 'adicionar_registro_fgts_ind_con' %}" class="btn btn-primary">Adicionar Novo Registro do FGTS, Individualização e/ou Contabilidade</a>
+  </div>
+  <div class="m-4">
+    <h2>Adicionar Novo Registro Adminstrativo</h2>
+    <a href="{% url 'adicionar_registro_adminstrativo' %}" class="btn btn-primary">Adicionar Novo Registro Adminstrativo</a>
+  </div>
+  <div class="m-4">
+    <h2>Adicionar Novo Nome</h2>
+    <a href="{% url 'adicionar_nome' %}" class="btn btn-primary">Adicionar Novo Nome</a>
+  </div>
+  <div class="m-4">
+    <h2>Adicionar Novo Orgão/Setor</h2>
+    <a href="{% url 'adicionar_orgao_setor' %}" class="btn btn-primary">Adicionar Novo Orgão/Setor</a>
+  </div>
+  <div class="m-4">
+    <h2>Adicionar Novo Município</h2>
+    <a href="{% url 'adicionar_municipio' %}" class="btn btn-primary">Adicionar Novo Município</a>
+  </div>
+  <div class="m-4">
+    <h2>Adicionar Nova Atividade</h2>
+    <a href="{% url 'adicionar_atividade' %}" class="btn btn-primary">Adicionar Nova Atividade</a>
+  </div>
+{% endblock container %}

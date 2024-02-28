@@ -22,4 +22,6 @@ class CustomUser(AbstractUser):
         blank=True,
         verbose_name='user permissions',
         help_text='Specific permissions for this user.'
-    )    
+    ) 
+
+    is_logged_in = models.BooleanField(default=False)   

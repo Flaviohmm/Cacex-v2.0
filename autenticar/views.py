@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.messages import constants
 from django.contrib import auth
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth import get_user_model
 from .forms import PasswordResetRequestForm, CustomSetPasswordForm
 from django.contrib.auth.tokens import default_token_generator
@@ -61,12 +61,22 @@ def login(request):
             messages.add_message(request, constants.ERROR, 'Usuario ou senha inválidos')
             return redirect('/auth/login')
         else:
-            auth_login(request, usuario)
-            return redirect('/')
+            if usuario.is_logged_in:
+                messages.add_message(request, constants.ERROR, 'Este usuário já está logado')
+                return redirect('/auth/login')
+            else:
+                usuario.is_logged_in = True
+                usuario.save()
+                auth_login(request, usuario)
+                return redirect('/')
         
 
 def sair(request):
-    auth.logout(request)
+    if request.user.is_authenticated:
+        user = request.user
+        user.is_logged_in = False
+        user.save()
+        auth.logout(request)
     return redirect('/auth/login')
 
 

@@ -89,7 +89,7 @@
                       <td>{{ registro.valor_total|format_currency }}</td>
                       <td>{{ registro.valor_liberado|format_currency }}</td>
                       <td>{{ registro.falta_liberar|format_currency }}</td>
-                      <td>{{ registro.prazo_de_vigencia|formatar_data }}</td>
+                      <td>{{ registro.prazo_de_vigencia }}</td>
                       <td>{{ registro.situacao }}</td>
                       <td>{{ registro.providencia }}</td>
 
@@ -105,10 +105,10 @@
                         <td class="table-warning">{{ registro.status }}</td>
                       {% endif %}
 
-                      <td>{{ registro.data_recepcao|formatar_data }}</td>
+                      <td>{{ registro.data_recepcao }}</td>
                       <td>
                         {% if registro.data_inicio %}
-                            {{ registro.data_inicio|formatar_data }}
+                            {{ registro.data_inicio }}
                         {% else %}
                             Sem data de início
                         {% endif %}
@@ -117,7 +117,7 @@
                       <td>{% if registro.documento_cancelado %}Sim{% else %}Não{% endif %}</td>
                       <td>
                         {% if registro.data_fim %}
-                            {{ registro.data_fim|formatar_data }}
+                            {{ registro.data_fim }}
                         {% else %}
                             Sem data de término
                         {% endif %}

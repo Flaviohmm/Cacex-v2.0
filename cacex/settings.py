@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-3uq)bw9*x&e9_uwgzi%5%gs)ed23h8c10vj(0*^0-uo8dlrt(f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['cacex-764d42d11b4b.herokuapp.com', 'cacex.org.br', '127.0.0.1']
+ALLOWED_HOSTS = ['.vercel.app', '127.0.0.1']
 
 
 # Application definition
@@ -85,20 +85,20 @@ WSGI_APPLICATION = 'cacex.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
-}
-
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'postgres',
-#         'USER': 'cacex',
-#         'PASSWORD': '1234',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
+#     'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'cacex',
+        'PASSWORD': '1234',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 
 
 # Password validation

@@ -1,5 +1,5 @@
 #!/bin/sh
-'''exec' "/home/cacex/Documentos/Projetos da CACEX/CACEX v1 - Python Django/CacexV2/venv/bin/python" "$0" "$@"
+'''exec' "/home/flavio/Documentos/CACEX v2 - Python Django/Projetos da CACEX/CACEX v1 - Python Django/CacexV2/venv/bin/python" "$0" "$@"
 ' '''
 # -*- coding: utf-8 -*-
 import re

@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/home/cacex/Documentos/Projetos da CACEX/CACEX v1 - Python Django/CacexV2/venv"
+set -gx VIRTUAL_ENV "/home/flavio/Documentos/CACEX v2 - Python Django/Projetos da CACEX/CACEX v1 - Python Django/CacexV2/venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

@@ -26,7 +26,12 @@ SECRET_KEY = 'django-insecure-3uq)bw9*x&e9_uwgzi%5%gs)ed23h8c10vj(0*^0-uo8dlrt(f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['cacex.fly.dev', 'cacex.org.br']
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://cacex.fly.dev/",
+    "https://*.fly.dev",
+]
 
 # Application definition
 
@@ -86,15 +91,14 @@ WSGI_APPLICATION = 'cacex.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': '1234',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "db.sqlite3",
     }
 }
 
+CSRF_COOKIE_SECURE = True
+
+CSRF_COOKIE_SAMESITE = None
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

@@ -5,6 +5,9 @@ FROM python:${PYTHON_VERSION}
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+# Defina o locale
+ENV LC_ALL pt_BR.utf8
+
 # install psycopg2 dependencies.
 RUN apt-get update && apt-get install -y \
     libpq-dev \

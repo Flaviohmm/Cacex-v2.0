@@ -20,8 +20,6 @@ from .models import (
     RegistroAdminstracao,
 )
 from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
-import locale
-import json
 
 
 @login_required(login_url='/auth/login')
@@ -50,6 +48,9 @@ def inicio(request):
 
 def adicionar(request):
     return render(request, 'adicionar.html')
+
+def adicionar_dados(request):
+    return render(request, 'adicionar_dados.html')
 
 def adicionar_nome(request):
     if request.method == 'POST':
@@ -83,10 +84,81 @@ def adicionar_atividade(request):
     
     return render(request, 'adicionar_atividade.html')
 
-def adicionar_registro(request):
-    # Defina a localidade para o formato brasileiro
-    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+def listar_classes_adicionadas():
+    classes_adicionadas = {
+        'nomes': Nome.objects.all(),
+        'setores': Setor.objects.all(),
+        'municipios': Municipio.objects.all(),
+        'atividades': Atividade.objects.all(),
+    }
 
+    return classes_adicionadas
+
+def listar_dados(request):
+    # Chame a função para obter os objetos adicionados
+    classes_adicionadas = listar_classes_adicionadas()
+
+    # Acesse os objetos de cada classe conforme necessário
+    nomes = classes_adicionadas['nomes']
+    setores = classes_adicionadas['setores']
+    municipios = classes_adicionadas['municipios']
+    atividades = classes_adicionadas['atividades']
+
+    if request.method == 'POST':
+        #Verifica se o formulário foi submetido para edição
+        if 'editar_nome' in request.POST:
+            nome_id = request.POST.get('editar_nome')
+            nome = get_object_or_404(Nome, id=nome_id)
+            novo_nome = request.POST.get('novo_nome')
+            nome.nome = novo_nome
+            nome.save()
+        elif 'excluir_nome' in request.POST:
+            nome_id = request.POST.get('excluir_nome')
+            nome = get_object_or_404(Nome, id=nome_id)
+            nome.delete()
+        elif 'editar_setor' in request.POST:
+            setor_id = request.POST.get('editar_setor')
+            setor = get_object_or_404(Setor, id=setor_id)
+            novo_setor = request.POST.get('novo_setor')
+            setor.orgao_setor = novo_setor
+            setor.save()
+        elif 'excluir_setor' in request.POST:
+            setor_id = request.POST.get('excluir_setor')
+            setor = get_object_or_404(Setor, id=setor_id)
+            setor.delete()
+        elif 'editar_municipio' in request.POST:
+            municipio_id = request.POST.get('editar_municipio')
+            municipio = get_object_or_404(Municipio, id=municipio_id)
+            novo_municipio = request.POST.get('novo_municipio')
+            municipio.municipio = novo_municipio
+            municipio.save()
+        elif 'excluir_municipio' in request.POST:
+            municipio_id = request.POST.get('excluir_municipio')
+            municipio = get_object_or_404(Municipio, id=municipio_id)
+            municipio.delete()
+        elif 'editar_atividade' in request.POST:
+            atividade_id = request.POST.get('editar_atividade')
+            atividade = get_object_or_404(Atividade, id=atividade_id)
+            nova_atividade = request.POST.get('nova_atividade')
+            atividade.atividade = nova_atividade
+            atividade.save()
+        elif 'excluir_atividade' in request.POST:
+            atividade_id = request.POST.get('excluir_atividade')
+            atividade = get_object_or_404(Atividade, id=atividade_id)
+            atividade.delete()
+
+        return redirect('listar_dados')
+
+    context = {
+        'nomes': nomes,
+        'setores': setores,
+        'municipios': municipios,
+        'atividades': atividades,
+        'classes_adicionadas': classes_adicionadas,
+    }
+    return render(request, 'listar_dados.html', context)
+
+def adicionar_registro(request):
     if request.method == 'POST':
         nome = Nome.objects.get(id=request.POST.get('nome'))
         orgao_setor = Setor.objects.get(id=request.POST.get('orgao_setor'))
@@ -96,22 +168,15 @@ def adicionar_registro(request):
         parlamentar = request.POST.get('parlamentar')
         objeto = request.POST.get('objeto')
 
-        # Configure a localidade para o formato brasileiro
-        locale.setlocale(locale.LC_NUMERIC, 'pt_BR.UTF-8')
+        # Remova caracteres de formatação do valor recuperado
+        oge_ogu_str = request.POST.get('oge_ogu', 0).replace('R$', '').replace('.', '').replace(',', '.')
+        oge_ogu = float(oge_ogu_str)
+        
+        cp_prefeitura_str = request.POST.get('cp_prefeitura', 0).replace('R$', '').replace('.', '').replace(',', '.')
+        cp_prefeitura = float(cp_prefeitura_str)
 
-        # Remova caracteres não numéricos da string e converta para float
-        oge_ogu_str = request.POST.get('oge_ogu')
-        oge_ogu_limpo = ''.join(c for c in oge_ogu_str if c.isdigit() or c == '.' or c == ',')
-        oge_ogu = locale.atof(oge_ogu_limpo)
-
-        # Repita o processo para outros campos que podem ter formato monetário
-        cp_prefeitura_str = request.POST.get('cp_prefeitura')
-        cp_prefeitura_limpo = ''.join(c for c in cp_prefeitura_str if c.isdigit() or c == '.' or c == ',')
-        cp_prefeitura = locale.atof(cp_prefeitura_limpo)
-
-        valor_liberado_str = request.POST.get('valor_liberado')
-        valor_liberado_limpo = ''.join(c for c in valor_liberado_str if c.isdigit() or c == '.' or c == ',')
-        valor_liberado = locale.atof(valor_liberado_limpo)
+        valor_liberado_str = request.POST.get('valor_liberado', 0).replace('R$', '').replace('.', '').replace(',', '.')
+        valor_liberado = float(valor_liberado_str)
 
         prazo_vigencia = request.POST.get('prazo_vigencia')
         situacao = request.POST.get('situacao')
@@ -152,12 +217,12 @@ def adicionar_registro(request):
         exibir_modal, dias_restantes = exibir_modal_prazo_vigencia(registro)
         registro.duracao_dias_uteis = dia_trabalho_total(registro.data_inicio, registro.data_fim)
 
-        # Formate os valores usando a localidade definida
-        registro.oge_ogu = locale.currency(oge_ogu, grouping=True)
-        registro.cp_prefeitura = locale.currency(cp_prefeitura, grouping=True)
-        registro.valor_liberado = locale.currency(valor_liberado, grouping=True)
-        registro.valor_total = locale.currency(registro.valor_total, grouping=True)
-        registro.falta_liberar = locale.currency(registro.falta_liberar, grouping=True)
+        # Formate os valores manualmente como moeda (considerando o formato brasileiro)
+        registro.oge_ogu = f'R${oge_ogu:,.2f}'
+        registro.cp_prefeitura = f'R${cp_prefeitura:,.2f}'
+        registro.valor_liberado = f'R${valor_liberado:,.2f}'
+        registro.valor_total = f'R${registro.valor_total:,.2f}'
+        registro.falta_liberar = f'R${registro.falta_liberar:,.2f}'
 
         return redirect('home')
     
@@ -200,8 +265,6 @@ def visualizar_tabela(request):
     return render(request, 'visualizar_tabela.html', context)
 
 def editar_registro(request, registro_id):
-    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
-
     # Obtenha a instância do registro a ser editado
     registro = get_object_or_404(RegistroFuncionarios, id=registro_id)
 
@@ -219,11 +282,11 @@ def editar_registro(request, registro_id):
         'num_convenio': registro.num_convenio,
         'parlamentar': registro.parlamentar,
         'objeto': registro.objeto,
-        'oge_ogu': locale.currency(registro.oge_ogu, grouping=True),
-        'cp_prefeitura': locale.currency(registro.cp_prefeitura, grouping=True),
-        'valor_total': locale.currency(registro.valor_total, grouping=True),
-        'valor_liberado': locale.currency(registro.valor_liberado, grouping=True),
-        'falta_liberar': locale.currency(registro.falta_liberar, grouping=True),
+        'oge_ogu': f'R${registro.oge_ogu:,.2f}',
+        'cp_prefeitura': f'R${registro.cp_prefeitura:,.2f}',
+        'valor_total': f'R${registro.valor_total:,.2f}',
+        'valor_liberado': f'R${registro.valor_liberado:,.2f}',
+        'falta_liberar': f'R${registro.falta_liberar:,.2f}',
         'prazo_de_vigencia': registro.prazo_vigencia,
         'situacao': registro.situacao,
         'providencia': registro.providencia,
@@ -245,22 +308,15 @@ def editar_registro(request, registro_id):
         registro.parlamentar = request.POST.get('parlamentar')
         registro.objeto = request.POST.get('objeto')
 
-        # Configure a localidade para o formato brasileiro
-        locale.setlocale(locale.LC_NUMERIC, 'pt_BR.UTF-8')
+        # Remova caracteres de formatação do valor recuperado
+        oge_ogu_str = request.POST.get('oge_ogu', 0).replace('R$', '').replace('.', '').replace(',', '.')
+        registro.oge_ogu = float(oge_ogu_str)
+        
+        cp_prefeitura_str = request.POST.get('cp_prefeitura', 0).replace('R$', '').replace('.', '').replace(',', '.')
+        registro.cp_prefeitura = float(cp_prefeitura_str)
 
-        # Remova caracteres não numéricos da string e converta para float
-        oge_ogu_str = request.POST.get('oge_ogu')
-        oge_ogu_limpo = ''.join(c for c in oge_ogu_str if c.isdigit() or c == '.' or c == ',')
-        registro.oge_ogu = locale.atof(oge_ogu_limpo)
-
-        # Repita o processo para os outros campos que podem ter formato monetário
-        cp_prefeitura_str = request.POST.get('cp_prefeitura')
-        cp_prefeitura_limpo = ''.join(c for c in cp_prefeitura_str if c.isdigit() or c == '.' or c == ',')
-        registro.cp_prefeitura = locale.atof(cp_prefeitura_limpo)
-
-        valor_liberado_str = request.POST.get('valor_liberado')
-        valor_liberado_limpo = ''.join(c for c in valor_liberado_str if c.isdigit() or c == '.' or c == ',')
-        registro.valor_liberado = locale.atof(valor_liberado_limpo)
+        valor_liberado_str = request.POST.get('valor_liberado', 0).replace('R$', '').replace('.', '').replace(',', '.')
+        registro.valor_liberado = float(valor_liberado_str)
 
         registro.prazo_vigencia = request.POST.get('prazo_vigencia')
         registro.situacao = request.POST.get('situacao')
@@ -289,11 +345,11 @@ def editar_registro(request, registro_id):
         registro.duracao_dias_uteis = dia_trabalho_total(registro.data_inicio, registro.data_fim)
 
         # Formate os valores usando a localidade definida
-        registro.oge_ogu = locale.currency(registro.oge_ogu, grouping=True)
-        registro.cp_prefeitura = locale.currency(registro.cp_prefeitura, grouping=True)
-        registro.valor_liberado = locale.currency(registro.valor_liberado, grouping=True)
-        registro.valor_total = locale.currency(registro.valor_total, grouping=True)
-        registro.falta_liberar = locale.currency(registro.falta_liberar, grouping=True)
+        registro.oge_ogu = f'R${registro.oge_ogu:,.2f}'
+        registro.cp_prefeitura = f'R${registro.cp_prefeitura:,.2f}'
+        registro.valor_liberado = f'R${registro.valor_liberado:,.2f}'
+        registro.valor_total = f'R${registro.valor_total:,.2f}'
+        registro.falta_liberar = f'R${registro.falta_liberar:,.2f}'
         
         messages.add_message(request, constants.SUCCESS, 'Registro editado com sucesso.')
         messages.success(request, 'Registro editado com sucesso.')
@@ -771,8 +827,6 @@ def tabela_filtrada_entidade(request):
     return render(request, 'tabela_filtrada_entidade.html', context)
 
 def anexar_registro(request, registro_id):
-    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
-
     # Obtenha o registro a ser anexado
     registro = get_object_or_404(RegistroFuncionarios, id=registro_id)
 
@@ -796,11 +850,11 @@ def anexar_registro(request, registro_id):
             'num_convenio': registro.num_convenio,
             'parlamentar': registro.parlamentar,
             'objeto': registro.objeto,
-            'oge_ogu': locale.currency(registro.oge_ogu, grouping=True),
-            'cp_prefeitura': locale.currency(registro.cp_prefeitura, grouping=True),
-            'valor_total': locale.currency(registro.valor_total, grouping=True),
-            'valor_liberado': locale.currency(registro.valor_liberado, grouping=True),
-            'falta_liberar': locale.currency(registro.falta_liberar, grouping=True),
+            'oge_ogu': f'R${registro.oge_ogu:,.2f}',
+            'cp_prefeitura': f'R${registro.cp_prefeitura:,.2f}',
+            'valor_total': f'R${registro.valor_total:,.2f}',
+            'valor_liberado': f'R${registro.valor_liberado}',
+            'falta_liberar': f'R${registro.falta_liberar:,.2f}',
             'prazo_de_vigencia': registro.prazo_vigencia.strftime('%d-%m-%Y'),
             'situacao': registro.situacao,
             'providencia': registro.providencia,
@@ -831,8 +885,6 @@ def anexar_registro(request, registro_id):
     return redirect('mostrar_registros_anexados')
 
 def desanexar_registro(request, registro_id):
-    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
-
     # Obtenha a lista de registros anexados e desanexados da sessão
     registros_anexados = request.session.get('registros_anexados', [])
     registros_desanexados = request.session.get('registros_desanexados', [])
@@ -918,9 +970,6 @@ def mostrar_registros_anexados(request):
     return render(request, 'tabela_anexados.html', context)
 
 def adicionar_registro_rf(request):
-    # Defina a localidade para o formato brasileiro
-    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
-
     if request.method == 'POST':
         nome = Nome.objects.get(id=request.POST.get('nome'))
         municipio = Municipio.objects.get(id=request.POST.get('municipio'))
@@ -928,13 +977,9 @@ def adicionar_registro_rf(request):
         num_parcelamento = request.POST.get('num_parcelamento')
         objeto = request.POST.get('objeto')
 
-        # Configure a localidade para o formato brasileiro
-        locale.setlocale(locale.LC_NUMERIC, 'pt_BR.UTF-8')
-
         # Remova caracteres não numéricos da string e converta para float
-        valor_total_str = request.POST.get('valor_total')
-        valor_total_limpo = ''.join(c for c in valor_total_str if c.isdigit() or c == '.' or c == ',')
-        valor_total = locale.atof(valor_total_limpo)
+        valor_total_str = request.POST.get('valor_total', '0').replace('R$', '').replace('.', '').replace(',', '.')
+        valor_total = float(valor_total_str)
 
         prazo_vigencia = request.POST.get('prazo_vigencia')
         situacao = request.POST.get('situacao')
@@ -959,8 +1004,8 @@ def adicionar_registro_rf(request):
         # Chame a função utilitária
         exibir_modal, dias_restantes = exibir_modal_prazo_vigencia(registro_rf)
 
-        # Formate os valores usando a localidade definida
-        registro_rf.valor_total = locale.currency(valor_total, grouping=True)
+        # Formate os valores 
+        registro_rf.valor_total = f'R${valor_total:,.2f}'
 
         return redirect('inicio')
     
@@ -1001,8 +1046,6 @@ def visualizar_tabela_rf(request):
     return render(request, 'visualizar_tabela_rf.html', context)
 
 def adicionar_registro_fgts_ind_con(request):
-    locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
-
     if request.method == 'POST':
         try:
             competencia = request.POST.get('competencia')
@@ -1014,25 +1057,18 @@ def adicionar_registro_fgts_ind_con(request):
             fgts = request.POST.get('fgts')
             gfip = request.POST.get('gfip')
 
-            # Configure a localidade para o formato brasileiro
-            locale.setlocale(locale.LC_NUMERIC, 'pt_BR.UTF-8')
-
             # Remova caracteres não numéricos da string e converta para float
-            folha_de_pagamento_str = request.POST.get('folha_de_pagamento')
-            folha_de_pagamento_limpo = ''.join(c for c in folha_de_pagamento_str if c.isdigit() or c == '.' or c == ',')
-            folha_de_pagamento = locale.atof(folha_de_pagamento_limpo)
+            folha_de_pagamento_str = request.POST.get('folha_de_pagamento', '0').replace('R$', '').replace('.', '').replace(',', '.')
+            folha_de_pagamento = float(folha_de_pagamento_str)
 
-            arbitrado_str = request.POST.get('arbitrado')
-            arbitrado_limpo = ''.join(c for c in arbitrado_str if c.isdigit() or c == '.' or c == ',')
-            arbitrado = locale.atof(arbitrado_limpo)
+            arbitrado_str = request.POST.get('arbitrado', '0').replace('R$', '').replace('.', '').replace(',', '.')
+            arbitrado = float(arbitrado_str)
 
-            recomposto_str = request.POST.get('recomposto')
-            recomposto_limpo = ''.join(c for c in recomposto_str if c.isdigit() or c == '.' or c == ',')
-            recomposto = locale.atof(recomposto_limpo)
+            recomposto_str = request.POST.get('recomposto', '0').replace('R$', '').replace('.', '').replace(',', '.')
+            recomposto = float(recomposto_str)
 
-            rem_debito_str = request.POST.get('rem_debito')
-            rem_debito_limpo = ''.join(c for c in rem_debito_str if c.isdigit() or c == '.' or c == ',')
-            rem_debito = locale.atof(rem_debito_limpo)
+            rem_debito_str = request.POST.get('rem_debito', '0').replace('R$', '').replace('.', '').replace(',', '.')
+            rem_debito = float(rem_debito_str)
             
             # Crie instâncias dos modelos relacionados...
 
@@ -1053,11 +1089,11 @@ def adicionar_registro_fgts_ind_con(request):
 
             registro.save()
 
-            # Formate os valores usando a localidade definida
-            registro.folha_de_pagamento = locale.currency(folha_de_pagamento, grouping=True)
-            registro.arbitrado = locale.currency(arbitrado, grouping=True)
-            registro.recomposto = locale.currency(recomposto, grouping=True)
-            registro.rem_debito = locale.currency(rem_debito, grouping=True)
+            # Formate os valores
+            registro.folha_de_pagamento = f'R${folha_de_pagamento:,.2f}'
+            registro.arbitrado = f'R${arbitrado:,.2f}'
+            registro.recomposto = f'R${recomposto:,.2f}'
+            registro.rem_debito = f'R${rem_debito:,.2f}'
 
             return redirect('inicio')
         

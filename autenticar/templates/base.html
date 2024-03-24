@@ -41,13 +41,22 @@
               </div>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'adicionar' %}">Adicionar</a>
+              <a class="nav-link" href="{% url 'adicionar' %}">Adicionar Registros</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'adicionar_dados' %}">Adicionar Dados</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'listar_dados' %}">Listar Dados</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'historico' %}">Histórico Geral</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'mostrar_registros_anexados' %}">Arquivado</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'grafico_geral' %}">Dashboard</a>
+              <a class="nav-link" href="{% url 'grafico_geral' %}">Painel</a>
             </li>
           </ul>
         </div>

@@ -15,7 +15,7 @@ def format_currency(value):
         formatted_value = '{:,.2f}'.format(numeric_value)
 
         # Adicione o simbolo da moeda brasileira R$
-        formatted_value = 'R$ ' + formatted_value
+        formatted_value = 'R$ ' + formatted_value.replace(',', 'v').replace('.', ',').replace('v', '.')
 
         return formatted_value
     except ValueError:

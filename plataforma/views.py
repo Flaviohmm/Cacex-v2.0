@@ -20,6 +20,7 @@ from .models import (
     RegistroAdminstracao,
 )
 from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
+from .templatetags.custom_filters import format_currency
 
 
 @login_required(login_url='/auth/login')
@@ -282,19 +283,19 @@ def editar_registro(request, registro_id):
         'num_convenio': registro.num_convenio,
         'parlamentar': registro.parlamentar,
         'objeto': registro.objeto,
-        'oge_ogu': f'R${registro.oge_ogu:,.2f}',
-        'cp_prefeitura': f'R${registro.cp_prefeitura:,.2f}',
-        'valor_total': f'R${registro.valor_total:,.2f}',
-        'valor_liberado': f'R${registro.valor_liberado:,.2f}',
-        'falta_liberar': f'R${registro.falta_liberar:,.2f}',
-        'prazo_de_vigencia': registro.prazo_vigencia,
+        'oge_ogu': format_currency(registro.oge_ogu),
+        'cp_prefeitura': format_currency(registro.cp_prefeitura),
+        'valor_total': format_currency(registro.valor_total),
+        'valor_liberado': format_currency(registro.valor_liberado),
+        'falta_liberar': format_currency(registro.falta_liberar),
+        'prazo_de_vigencia': registro.prazo_vigencia.strftime("%d/%m/%Y"),
         'situacao': registro.situacao,
         'providencia': registro.providencia,
-        'data_recepcao': registro.data_recepcao,
-        'data_inicio': registro.data_inicio,
-        'documento_pendente': registro.documento_pendente,
-        'documento_cancelado': registro.documento_cancelado,
-        'data_fim': registro.data_fim,
+        'data_recepcao': registro.data_recepcao.strftime("%d/%m/%Y"),
+        'data_inicio': registro.data_inicio.strftime("%d/%m/%Y") if registro.data_inicio else "",
+        'documento_pendente': 'Sim' if registro.documento_pendente else 'Não',
+        'documento_cancelado': 'Sim' if registro.documento_cancelado else 'Não',
+        'data_fim': registro.data_fim.strftime("%d/%m/%Y") if registro.data_fim else "",
         'duracao_dias_uteis': registro.duracao_dias_uteis,
     }
 

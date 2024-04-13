@@ -61,14 +61,10 @@ def login(request):
             messages.add_message(request, constants.ERROR, 'Usuario ou senha inválidos')
             return redirect('/auth/login')
         else:
-            if usuario.is_logged_in:
-                messages.add_message(request, constants.ERROR, 'Este usuário já está logado')
-                return redirect('/auth/login')
-            else:
-                usuario.is_logged_in = True
-                usuario.save()
-                auth_login(request, usuario)
-                return redirect('/')
+            usuario.is_logged_in = True
+            usuario.save()
+            auth_login(request, usuario)
+            return redirect('/')
         
 
 def sair(request):

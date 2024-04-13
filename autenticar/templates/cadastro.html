@@ -27,11 +27,10 @@
                     <a href="{% url 'login' %}" class="btn btn-secondary mb-4">Login</a>
                     <br>
                 </div>
-
             </div>
         </div>
 
-        <div class="col-md-9 fundo">
+        <div class="col-md-9 fundo" style="height: 120vh;">
             <div class="area_cadastrar">
                 <form action="{% url 'cadastro' %}" method="POST">
 
@@ -50,11 +49,12 @@
                     <input name="username" type="text" class="input_cadastrar input_cadastrar_nome" placeholder="Usuario...">
                     <br>
                     <br>
-                    <input name="senha" type="password" class="input_cadastrar input_cadastrar_senha" placeholder="Senha...">
+                    <input name="senha" type="password" class="input_cadastrar input_cadastrar_senha m-2" placeholder="Senha...">
                     <br>
                     <input type="submit" value="Cadastrar" class="btn btn-primary btn_cadastrar" style="background-color: #0f51a1;">
-
+                    <br>            
                 </form>
+                <br>
             </div>
         </div>
 

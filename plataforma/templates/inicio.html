@@ -12,30 +12,42 @@
     }
 
     .container {
-      width: 1344px;
-      height: 539px;
+      width: 100%; /* Faz a largura ser responsiva */
+      max-width: 1344px; /* Largura máxima para telas grandes */
+      margin: auto; /* Centraliza na tela (modifique conforme necessário) */
+      padding: 10px; /* Espaço ao redor da grade (ajuste a margem aqui) */
       display: grid;
-      grid-template-columns: repeat(4, 1fr); /* 4 columns */
+      grid-template-columns: 1fr; /* Colunas em dispositivos móveis */
       gap: 10px; /* Espaçamento entre os botões */
       justify-content: center;
       align-content: center;
     }
 
     .button {
-      width: 254px;
+      width: 100%; /* Faz a largura do botão ser responsivo */
+      max-width: 254px; /* Largura máxima para telas grandes */
       height: 97px;
+      margin: 0 auto; /* Centraliza o botão */
       border-radius: 15px;
       background: #0f51a1;
       display: flex;
       justify-content: center;
       align-items: center;
-      color: #fff; /* Cor do texto dentro do botão */
-      font-size: 16px; /* Tamanho da fonte do texto */
-      text-decoration: none; /* Remover sublinhado padrão do link */
+      color: #fff;
+      font-size: 16px;
+      text-decoration: none;
+    }
+
+    /* Media queries para ajustes responsivos */
+    @media(min-width: 992px) {
+      /* Desktops */
+      .container {
+        grid-template-columns: repeat(4, 1fr); /* 4 colunas para desktops */
+      }
     }
   </style>
 
-  <div class="container">
+  <div class="container mt-5">
     <a class="button" href="{% url 'tabela_caixa' %}">CAIXA</a>
     <a class="button" href="{% url 'tabela_estado' %}">ESTADO</a>
     <a class="button" href="{% url 'tabela_fnde' %}">FNDE</a>

@@ -21,6 +21,7 @@ from .models import (
 )
 from .utils import calcular_valores, exibir_modal_prazo_vigencia, dia_trabalho_total
 from .templatetags.custom_filters import format_currency
+import re
 
 
 @login_required(login_url='/auth/login')
@@ -1052,6 +1053,8 @@ def adicionar_registro_fgts_ind_con(request):
             competencia = request.POST.get('competencia')
             nome_empregado = request.POST.get('nome_empregado')
             pis = request.POST.get('pis')
+            # Remova caracteres não numéricos da string
+            pis = re.sub(r'\D', '', str(pis))
             admissao = request.POST.get('admissao')
             afastamento = request.POST.get('afastamento')
             cod_afastamento = request.POST.get('cod_afastamento')

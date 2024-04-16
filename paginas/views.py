@@ -1,4 +1,4 @@
-from plataforma.models import RegistroFuncionarios, Status
+from plataforma.models import RegistroFuncionarios, Status, Nome, Setor, Municipio, Atividade
 from django.shortcuts import render
 from django.db.models import Count
 from django.http import HttpResponse
@@ -7,6 +7,9 @@ from reportlab.lib.pagesizes import letter
 from reportlab.graphics.shapes import Drawing
 from reportlab.graphics.charts.barcharts import VerticalBarChart
 from reportlab.lib import colors
+from django.template.loader import get_template
+from django.conf import settings
+from xhtml2pdf import pisa
 
 
 def grafico_geral(request):
@@ -206,5 +209,27 @@ def gerador_pdf_tb_geral(request):
     pdf.showPage()
     pdf.save()
 
+    return response
+
+
+def gerar_pdf(request):
+    registros = RegistroFuncionarios.objects.all()
+
+    template_path = 'tabela_geral_pdf.html'
+    context = {
+        'registros': registros
+    }
+    print(registros)
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="nome_do_arquivo.pdf"'
+
+    template = get_template(template_path)
+    html = template.render(context)
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    if pisa_status.err:
+        return HttpResponse("Erro ao gerar PDF", status=500)
+    
     return response
 

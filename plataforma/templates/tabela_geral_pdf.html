@@ -1,0 +1,48 @@
+{% load humanize %}
+
+{% load custom_filters %}
+
+<style type="text/css" media="print">
+    @page {
+        size: landscape;
+    }
+</style>
+
+<table>
+    <thead>
+        <tr>
+          <th scope="col">NOME</th>
+          <th scope="col">ORGÃO/SETOR</th>
+          <th scope="col">MUNICÍPIO</th>
+          <th scope="col">ATIVIDADE</th>
+          <th scope="col">Nº CONVÊNIO</th>
+          <th scope="col">PARLAMENTAR</th>
+          <th scope="col">OBJETO</th>
+          <th scope="col">OGE/OGU</th>
+          <th scope="col">CP-PREFEITURA</th>
+          <th scope="col">VALOR TOTAL</th>
+          <th scope="col">VALOR LIBERADO</th>
+          <th scope="col">FALTA LIBERAR</th>
+          <th scope="col">PRAZO DE VIGÊNCIA</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for registro in registros %}
+          <tr>
+            <td>{{ registro.nome.nome }}</td>
+            <td>{{ registro.orgao_setor.orgao_setor }}</td>
+            <td>{{ registro.municipio.municipio }}</td>
+            <td>{{ registro.atividade.atividade }}</td>
+            <td>{{ registro.num_convenio }}</td>
+            <td>{{ registro.parlamentar }}</td>
+            <td>{{ registro.objeto }}</td>
+            <td>{{ registro.oge_ogu|format_currency }}</td>
+            <td>{{ registro.cp_prefeitura|format_currency }}</td>
+            <td>{{ registro.calcular_valores.0|format_currency }}</td>
+            <td>{{ registro.valor_liberado|format_currency }}</td>
+            <td>{{ registro.calcular_valores.1|format_currency }}</td>
+            <td>{{ registro.prazo_vigencia|formatar_data }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+</table>

@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/cacex/Documents/CacexV2-20240323T004339Z-001/CacexV2/venv"
+VIRTUAL_ENV="/home/cacex/Downloads/CacexV2/venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

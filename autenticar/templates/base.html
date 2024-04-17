@@ -16,10 +16,38 @@
 
   {% if user.is_authenticated %}
    {% block header %}
+    <style>
+      .navbar {
+        width: 100%;
+        top: 0;
+        right: 0;
+        z-index: 1000;
+      }
+
+      .botao-sair {
+        float: right;
+        margin-right: 20px;
+      }
+
+      .botao-menu-hamburguer {
+        float: right;
+        margin-right: 60px;
+      }
+
+      @media screen and (max-width: 991px) {
+        .botao-sair, .botao-menu-hamburguer {
+          float: none;
+          position: absolute;
+          right: 10px;
+          bottom: 25px;
+        }
+      }
+    </style>
+
     <nav class="navbar navbar-expand-lg bg_navbar" data-bs-theme="dark">
       <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'inicio' %}"><img src="{% static 'autenticar/img/logo2.png' %}" alt="Logo" height="50px"></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation" style="margin-left: 95px;">
+        <button class="navbar-toggler botao-menu-hamburguer" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation" style="margin-left: 95px;">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarColor01">
@@ -62,7 +90,7 @@
         </div>
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a href="{% url 'sair' %}" class="nav-link text-secondary">Sair</a>
+            <a href="{% url 'sair' %}" class="nav-link text-secondary botao-sair">Sair</a>
           </li>
         </ul>
       </div>

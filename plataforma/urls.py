@@ -22,6 +22,7 @@ urlpatterns = [
     path('visualizar_tabela_adminstrativa/', views.visualizar_tabela_adminstrativa, name='visualizar_tabela_adminstrativa'),
     path('tabela_filtrada/', views.tabela_filtrada, name='tabela_filtrada'),
     path('tabela_caixa/', views.tabela_caixa, name='tabela_caixa'),
+    path('selecionar_municipio/<int:municipio_id>/', views.selecionar_municipio, name='selecionar_municipio'),
     path('tabela_estado/', views.tabela_estado, name='tabela_estado'),
     path('tabela_fnde/', views.tabela_fnde, name='tabela_fnde'),
     path('tabela_simec/', views.tabela_simec, name='tabela_simec'),

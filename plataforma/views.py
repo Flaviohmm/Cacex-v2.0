@@ -482,7 +482,25 @@ def tabela_caixa(request):
         'registros': registros,
     }
 
-    return render(request, 'tabela_caixa.html', context)
+    return render(request, 'tabela_caixa2.html', context)
+
+def selecionar_municipio(request, municipio_id):
+    municipio = Municipio.objects.get(id=municipio_id)
+    registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='CAIXA', municipio=municipio)
+
+    # Recupre dados para as listas suspensas
+    nomes = Nome.objects.all()
+    municipios = Municipio.objects.all()
+
+    # Exemplo de operações com o município selecionado
+    informacoes = {
+        'registros': registros,
+        'municipio': municipio,
+        'nomes': nomes,
+        'municipios': municipios,
+    }
+
+    return render(request, 'tabela_caixa.html', informacoes)
 
 def tabela_filtrada_caixa(request):
     nomes = Nome.objects.all()

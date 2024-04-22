@@ -6,6 +6,7 @@ from django.utils import timezone
 from decimal import Decimal
 from datetime import datetime, timedelta
 from autenticar.models import CustomUser
+from .templatetags.custom_filters import format_currency
 import numpy as np
 import json
 
@@ -167,9 +168,70 @@ class Historico(models.Model):
     data = models.DateTimeField(auto_now_add=True)
     dados_anteriores = models.JSONField(default=dict, encoder=DecimalJSONEncoder)
     registro = models.ForeignKey(RegistroFuncionarios, on_delete=models.CASCADE)
+    dados_atuais = models.JSONField(default=dict, encoder=DecimalJSONEncoder)
+
+    def save(self, *args, **kwargs):
+        if self.pk is not None: # Verifica se o objeto já existe no banco (edição)
+            # Obtém o objeto existente no banco para capturar os dados atuais
+            objeto_existente = Historico.objects.get(pk=self.pk)
+
+            # Atualiza os dados anteriores com base nos dados atuais do objeto existente
+            self.dados_anteriores = objeto_existente.dados_atuais
+
+            # Atualiza os dados atuais com os dados atuais do objeto atual
+            self.dados_atuais = self.get_current_data()
+        else: # Novo objeto
+            self.dados_atuais = self.get_current_data()
+
+        super(Historico, self).save(*args, **kwargs)
+
+    def get_dados_anteriores_log(self, logs):
+        dados_anteriores = {}
+
+        for log in logs:
+            if 'Dados Anteriores' in log:
+                parsed_data = log[log.find('{'):log.rfind('}')+1]
+                dados_anteriores = eval(parsed_data)
+
+        return dados_anteriores
+
+    def get_current_data(self):
+        # Acessando os dados atuais do modelo RegistroFuncionarios associado
+        dados_atuais = {
+            'nome': self.registro.nome.nome,
+            'orgao_setor': self.registro.orgao_setor.orgao_setor,
+            'municipio': self.registro.municipio.municipio,
+            'atividade': self.registro.atividade.atividade,
+            'num_convenio': self.registro.num_convenio,
+            'parlamentar': self.registro.parlamentar,
+            'objeto': self.registro.objeto,
+            'oge_ogu': format_currency(self.registro.oge_ogu),
+            'cp_prefeitura': format_currency(self.registro.cp_prefeitura),
+            'valor_total': format_currency(self.registro.valor_total),
+            'valor_liberado': format_currency(self.registro.valor_liberado),
+            'falta_liberar': format_currency(self.registro.falta_liberar),
+            'prazo_vigencia': self.registro.prazo_vigencia.strftime("%d/%m/%Y"),
+            'situacao': self.registro.situacao,
+            'providencia': self.registro.providencia,
+            'status': self.registro.status,
+            'data_recepcao': self.registro.data_recepcao.strftime("%d/%m/%Y"),
+            'data_inicio': self.registro.data_inicio.strftime("%d/%m/%Y") if self.registro.data_inicio else "",
+            'documento_pendente': 'Sim' if self.registro.documento_pendente else 'Não',
+            'documento_cancelado': 'Sim' if self.registro.documento_cancelado else 'Não',
+            'data_fim': self.registro.data_fim.strftime("%d/%m/%Y") if self.registro.data_fim else "",
+            'duracao_dias_uteis': self.registro.duracao_dias_uteis
+        }
+
+        return dados_atuais
+    
+    def print_modified_data(historico):
+        if historico.dados_anteriores:
+            for key, value in historico.dados_anteriores.items():
+                if historico.dados_anteriores[key] != historico.dados_atuais[key]:
+                    print(f"{key}: {historico.dados_anteriores[key]} -> {historico.dados_atuais[key]}")
 
     def __str__(self):
-        return f'{self.usuario} - {self.acao} em {self.data}'
+        return f'{self.usuario} - {self.acao} em {self.data} | \n Dados Anteriores: {self.dados_anteriores} ->  \n Dados Atuais: {self.dados_atuais}' 
     
 class RegistroReceitaFederal(models.Model):
     class Meta:

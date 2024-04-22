@@ -25,6 +25,14 @@
                 <strong>{{ key }}:</strong> {{ value }} <br>
               {% endfor %}
             </div>
+
+            <strong>Dados Atuais:</strong> <br>
+  
+            <div class="container">
+              {% for key, value in historico.dados_atuais.items %}
+                <strong>{{ key }}:</strong> {{ value }} <br>
+              {% endfor %}
+            </div>
             
           </li>
         {% endfor %}

@@ -266,17 +266,8 @@ def visualizar_tabela(request):
     # Renderize o modelo com o contexto
     return render(request, 'visualizar_tabela.html', context)
 
-def editar_registro(request, registro_id):
-    # Obtenha a instância do registro a ser editado
-    registro = get_object_or_404(RegistroFuncionarios, id=registro_id)
-
-    # Chame as funções utilitárias
-    registro.valor_total, registro.falta_liberar = calcular_valores(registro)
-    exibir_modal, dias_restantes = exibir_modal_prazo_vigencia(registro)
-    registro.duracao_dias_uteis = dia_trabalho_total(registro.data_inicio, registro.data_fim)
-
-    # Obtenha os dados anteriores fora do bloco condicional
-    dados_anteriores = {
+def dados_atuais_registro(registro):
+    dados_atuais = {
         'nome': registro.nome.nome,
         'orgao_setor': registro.orgao_setor.orgao_setor,
         'municipio': registro.municipio.municipio,
@@ -289,18 +280,43 @@ def editar_registro(request, registro_id):
         'valor_total': format_currency(registro.valor_total),
         'valor_liberado': format_currency(registro.valor_liberado),
         'falta_liberar': format_currency(registro.falta_liberar),
-        'prazo_de_vigencia': registro.prazo_vigencia.strftime("%d/%m/%Y"),
+        'prazo_vigencia': registro.prazo_vigencia.strftime("%d/%m/%Y"),
         'situacao': registro.situacao,
         'providencia': registro.providencia,
+        'status': registro.status,
         'data_recepcao': registro.data_recepcao.strftime("%d/%m/%Y"),
         'data_inicio': registro.data_inicio.strftime("%d/%m/%Y") if registro.data_inicio else "",
         'documento_pendente': 'Sim' if registro.documento_pendente else 'Não',
         'documento_cancelado': 'Sim' if registro.documento_cancelado else 'Não',
         'data_fim': registro.data_fim.strftime("%d/%m/%Y") if registro.data_fim else "",
-        'duracao_dias_uteis': registro.duracao_dias_uteis,
+        'duracao_dias_uteis': registro.duracao_dias_uteis
     }
 
+    return dados_atuais
+
+def editar_registro(request, registro_id):
+    # Obtenha a instância do registro a ser editado
+    registro = get_object_or_404(RegistroFuncionarios, id=registro_id)
+
+    # Consulte o histórico
+    historico_registros = Historico.objects.filter(registro=registro).order_by('-data')
+
+    # Chame as funções utilitárias
+    registro.valor_total, registro.falta_liberar = calcular_valores(registro)
+    exibir_modal, dias_restantes = exibir_modal_prazo_vigencia(registro)
+    registro.duracao_dias_uteis = dia_trabalho_total(registro.data_inicio, registro.data_fim)
+
+    # Obtenha os dados atuais do registro antes de qualquer alteração
+    dados_atuais = dados_atuais_registro(registro)
+
     if request.method == 'POST':
+        # Guarde os dados atuais antes das alterações
+        dados_anteriores = dados_atuais
+
+        # Exiba ou manipule os dados anteriores conforme necessário
+        for historico in historico_registros:
+            historico.dados_anteriores = dados_anteriores
+
         # Atualize os campos do registro com os dados do POST
         registro.nome = Nome.objects.get(id=request.POST.get('nome'))
         registro.orgao_setor = Setor.objects.get(id=request.POST.get('orgao_setor'))
@@ -320,26 +336,47 @@ def editar_registro(request, registro_id):
         valor_liberado_str = request.POST.get('valor_liberado', 0).replace('R$', '').replace('.', '').replace(',', '.')
         registro.valor_liberado = float(valor_liberado_str)
 
-        registro.prazo_vigencia = request.POST.get('prazo_vigencia')
+        prazo_vigencia_str = request.POST.get('prazo_vigencia')
+        prazo_vigencia = datetime.strptime(prazo_vigencia_str, '%Y-%m-%d')
+
+        registro.prazo_vigencia = prazo_vigencia
         registro.situacao = request.POST.get('situacao')
         registro.providencia = request.POST.get('providencia')
-        registro.data_recepcao = request.POST.get('data_recepcao')
-        registro.data_inicio = request.POST.get('data_inicio')
+
+        data_recepcao_str = request.POST.get('data_recepcao')
+        data_recepcao = datetime.strptime(data_recepcao_str, '%Y-%m-%d')
+
+        registro.data_recepcao = data_recepcao
+
+        data_inicio_str = request.POST.get('data_inicio')
+        data_inicio = datetime.strptime(data_inicio_str, '%Y-%m-%d')
+
+        registro.data_inicio = data_inicio
+
         registro.documento_pendente = 'documento_pendente' in request.POST
         registro.documento_cancelado = 'documento_cancelado' in request.POST
-        registro.data_fim = request.POST.get('data_fim')
+
+        data_fim_str = request.POST.get('data_fim')
+        data_fim = datetime.strptime(data_fim_str, '%Y-%m-%d')
+
+        registro.data_fim = data_fim
 
         # Salve o registro
         registro.save()
 
+        
         # Registre a atividade no histórico, incluindo os dados anteriores
         Historico.objects.create(
             usuario=request.user,
             acao='editar',
             dados_anteriores=dados_anteriores,
+            dados_atuais=dados_atuais_registro(registro),
             data=timezone.now(),
             registro=registro
         )
+
+        for historico in historico_registros:
+            historico.dados_atuais = dados_atuais_registro(registro)
 
         # Chame as funções utilitárias
         registro.valor_total, registro.falta_liberar = calcular_valores(registro)
@@ -357,12 +394,6 @@ def editar_registro(request, registro_id):
         messages.success(request, 'Registro editado com sucesso.')
         return redirect('home')
     
-    # Consulte o histórico
-    historico_registros = Historico.objects.filter(registro=registro).order_by('-data')
-
-    # Exiba ou manipule os dados anteriores conforme necessário
-    for historico in historico_registros:
-        dados_anteriores = historico.dados_anteriores
     
     # Recupere as opções para os campos estrangeiros...
     nomes = Nome.objects.all()
@@ -460,6 +491,8 @@ def historico_detail(request, registro_id):
 
     # Obtém os registros do histórico relacionados ao registro específico
     historico_registros = Historico.objects.filter(registro_id=registro).order_by('-data')
+
+    print(historico_registros)
 
     context = {
         'historico_registros': historico_registros,

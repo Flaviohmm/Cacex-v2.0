@@ -33,6 +33,14 @@
                 <strong>{{ key }}:</strong> {{ value }} <br>
               {% endfor %}
             </div>
+
+            <strong>Dados Alterados:</strong> <br>
+  
+            <div class="container">
+              {% for key, value_anterior, value_atual in diff %}
+                <strong>{{ key }}:</strong> {{ value_anterior }} -> {{ value_atual }} <br>
+              {% endfor %}   
+            </div>
             
           </li>
         {% endfor %}

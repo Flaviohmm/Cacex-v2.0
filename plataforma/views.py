@@ -294,6 +294,15 @@ def dados_atuais_registro(registro):
 
     return dados_atuais
 
+def comparar_valores(historico_dados_anteriores, historico_dados_atuais):
+    diff = []
+    for key, value_anterior in historico_dados_anteriores.items():
+        if key in historico_dados_atuais:
+            value_atual = historico_dados_atuais[key]
+            if value_atual != value_anterior:
+                diff.append((key, value_anterior, value_atual))
+    return diff
+
 def editar_registro(request, registro_id):
     # Obtenha a instância do registro a ser editado
     registro = get_object_or_404(RegistroFuncionarios, id=registro_id)
@@ -486,17 +495,26 @@ def historico(request):
     return render(request, 'historico_template.html', context)
 
 def historico_detail(request, registro_id):
-    # Obtenha o registro específico
+    # Obtenha o registro específico ou retorne um 404 se não existir
     registro = get_object_or_404(RegistroFuncionarios, id=registro_id)
+    
+    # Obtenha o histórico associado a este registro
+    hist = Historico.objects.filter(registro=registro).first()
+
+    if hist:
+        # Se houver um histórico, compare os valores
+        diff = comparar_valores(hist.dados_anteriores, hist.dados_atuais)
+    else:
+        # Se não houver histórico, inicialize diff como vazio
+        diff = []
 
     # Obtém os registros do histórico relacionados ao registro específico
     historico_registros = Historico.objects.filter(registro_id=registro).order_by('-data')
 
-    print(historico_registros)
-
     context = {
         'historico_registros': historico_registros,
-        'registro_id': registro_id
+        'registro_id': registro_id,
+        'diff': diff
     }
 
     return render(request, 'historico_detail_template.html', context)

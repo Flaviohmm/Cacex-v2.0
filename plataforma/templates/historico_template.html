@@ -9,33 +9,45 @@
 {% block title %}Histórico de Registros{% endblock title %}
 
 {% block container %}
-    <div class="m-4">
-      <h1>Histórico de Registros</h1> <br>
-  
-      <ul class="list-group">
-        {% for historico in historico_registros %}
-          <li class="list-group-item justify-content-between align-items-center">
-            <strong>Ação:</strong> {{ historico.acao }}<br>
-            <strong>Data:</strong> {{ historico.data }}<br>
-            <strong>Usuário:</strong> {{ historico.usuario }}<br>
-            <strong>Dados Anteriores:</strong> <br>
-  
-            <div class="container">
-              {% for key, value in historico.dados_anteriores.items %}
-                <strong>{{ key }}:</strong> {{ value }} <br>
-              {% endfor %}
-            </div>
-
-            <strong>Dados Atuais:</strong> <br>
-  
-            <div class="container">
-              {% for key, value in historico.dados_atuais.items %}
-                <strong>{{ key }}:</strong> {{ value }} <br>
-              {% endfor %}
-            </div>
-            
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
+  <div class="m-4">
+    <h1 class="mb-4">Histórico de Alterações</h1>
+    <table class='table table-hover' border="1">
+        <thead>
+            <tr>
+                <th>Ação</th>
+                <th>Data</th>
+                <th>Usuário</th>
+                <th>Dados Anteriores</th>
+                <th>Dados Atuais</th>
+                <th>Dados Alterados</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for registro in historico_registros %}
+            <tr>
+                <td>{{ registro.acao }}</td>
+                <td>{{ registro.data }}</td>
+                <td>{{ registro.usuario }}</td>
+                <td>
+                  {% for key, value in registro.dados_anteriores.items %}
+                    <strong>{{ key }}:</strong> {{ value }} <br>
+                  {% endfor %}
+                </td>
+                <td>
+                  {% for key, value in registro.dados_atuais.items %}
+                    <strong>{{ key }}:</strong> {{ value }} <br>
+                  {% endfor %}
+                </td>
+                <td>
+                  <ul>
+                      {% for alteracao in registro.dados_alterados %}
+                        <li><strong>{{ alteracao.0 }}</strong>: {{ alteracao.1 }} -> {{ alteracao.2 }}</li>
+                      {% endfor %}
+                  </ul>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
 {% endblock container %}

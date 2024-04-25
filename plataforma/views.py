@@ -318,6 +318,8 @@ def editar_registro(request, registro_id):
     # Obtenha os dados atuais do registro antes de qualquer alteração
     dados_atuais = dados_atuais_registro(registro)
 
+
+
     if request.method == 'POST':
         # Guarde os dados atuais antes das alterações
         dados_anteriores = dados_atuais
@@ -380,6 +382,7 @@ def editar_registro(request, registro_id):
             acao='editar',
             dados_anteriores=dados_anteriores,
             dados_atuais=dados_atuais_registro(registro),
+            dados_alterados=comparar_valores(dados_anteriores, dados_atuais),
             data=timezone.now(),
             registro=registro
         )
@@ -488,8 +491,24 @@ def tabela_filtrada(request):
 def historico(request):
     historico_registros = Historico.objects.all()
 
+    # Inicializa a lista de diferenças como vazia
+    registros = []
+
+    for hist in historico_registros:
+        registro = {
+            'acao': hist.acao,
+            'data': hist.data,
+            'usuario': hist.usuario,
+            'dados_anteriores': hist.dados_anteriores,
+            'dados_atuais': hist.dados_atuais,
+            'dados_alterados': comparar_valores(hist.dados_anteriores, hist.dados_atuais),
+        }
+        registros.append(registro)
+        print(comparar_valores(hist.dados_atuais, hist.dados_anteriores))
+
     context = {
-        'historico_registros': historico_registros
+        'historico_registros': registros,
+        
     }
 
     return render(request, 'historico_template.html', context)

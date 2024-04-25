@@ -169,6 +169,7 @@ class Historico(models.Model):
     dados_anteriores = models.JSONField(default=dict, encoder=DecimalJSONEncoder)
     registro = models.ForeignKey(RegistroFuncionarios, on_delete=models.CASCADE)
     dados_atuais = models.JSONField(default=dict, encoder=DecimalJSONEncoder)
+    dados_alterados = models.JSONField(default=dict, encoder=DecimalJSONEncoder)
 
     def save(self, *args, **kwargs):
         if self.pk is not None: # Verifica se o objeto já existe no banco (edição)
@@ -180,6 +181,9 @@ class Historico(models.Model):
 
             # Atualiza os dados atuais com os dados atuais do objeto atual
             self.dados_atuais = self.get_current_data()
+
+            # Calcula os dados alterados
+            self.dados_alterados = self.comparar_valores(self.dados_anteriores, self.dados_atuais)
         else: # Novo objeto
             self.dados_atuais = self.get_current_data()
 
@@ -224,11 +228,14 @@ class Historico(models.Model):
 
         return dados_atuais
     
-    def print_modified_data(historico):
-        if historico.dados_anteriores:
-            for key, value in historico.dados_anteriores.items():
-                if historico.dados_anteriores[key] != historico.dados_atuais[key]:
-                    print(f"{key}: {historico.dados_anteriores[key]} -> {historico.dados_atuais[key]}")
+    def comparar_valores(self, dados_anteriores, dados_atuais):
+        diff = []
+        for key, value_anterior in dados_anteriores.items():
+            if key in dados_atuais:
+                value_atual = dados_atuais[key]
+                if value_atual != value_anterior:
+                    diff.append((key, value_anterior, value_atual))
+        return diff
 
     def __str__(self):
         return f'{self.usuario} - {self.acao} em {self.data} | \n Dados Anteriores: {self.dados_anteriores} ->  \n Dados Atuais: {self.dados_atuais}' 

@@ -516,24 +516,27 @@ def historico(request):
 def historico_detail(request, registro_id):
     # Obtenha o registro específico ou retorne um 404 se não existir
     registro = get_object_or_404(RegistroFuncionarios, id=registro_id)
-    
-    # Obtenha o histórico associado a este registro
-    hist = Historico.objects.filter(registro=registro).first()
-
-    if hist:
-        # Se houver um histórico, compare os valores
-        diff = comparar_valores(hist.dados_anteriores, hist.dados_atuais)
-    else:
-        # Se não houver histórico, inicialize diff como vazio
-        diff = []
 
     # Obtém os registros do histórico relacionados ao registro específico
     historico_registros = Historico.objects.filter(registro_id=registro).order_by('-data')
 
+    # Inicializa a lista de diferenças como vazia
+    registros = []
+
+    for hist in historico_registros:
+        reg = {
+            'acao': hist.acao,
+            'data': hist.data,
+            'usuario': hist.usuario,
+            'dados_anteriores': hist.dados_anteriores,
+            'dados_atuais': hist.dados_atuais,
+            'dados_alterados': comparar_valores(hist.dados_anteriores, hist.dados_atuais)
+        }
+        registros.append(reg)
+
     context = {
-        'historico_registros': historico_registros,
+        'historico_registros': registros,
         'registro_id': registro_id,
-        'diff': diff
     }
 
     return render(request, 'historico_detail_template.html', context)

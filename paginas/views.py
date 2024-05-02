@@ -233,3 +233,30 @@ def gerar_pdf(request):
     
     return response
 
+def gerar_pdf_caixa_municipios_selecionados(request):
+    orgao_setor_caixa = Setor.objects.get(orgao_setor='CAIXA')
+
+    municipio_id = request.GET.get('municipio')
+
+    registros_filtrados = RegistroFuncionarios.objects.filter(orgao_setor=orgao_setor_caixa)
+
+    if municipio_id:
+        registros_filtrados = registros_filtrados.filter(municipio__id=municipio_id)
+
+    template_path = 'tabela_geral_pdf.html'
+    context = {
+        'registros': registros_filtrados
+    }
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="nome_do_arquivo.pdf"'
+
+    template = get_template(template_path)
+    html = template.render(context)
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    if pisa_status.err:
+        return HttpResponse("Erro ao gerar PDF", status=500)
+    
+    return response
+

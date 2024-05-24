@@ -397,6 +397,88 @@
           </p>
         </div>
       </div>
+
+      <a class="btn btn-success m-4" href="#" id="btnGerarCSV">Gerar CSV</a>
+
+        <script>
+          document.getElementById('btnGerarCSV').addEventListener('click', function() {
+            var data = [
+              // Inicie um array vazio para armazenar os registros
+            ];
+
+            // Itere sobre os registros (linhas) da tabela para extrair os dados e adicioná-los ao array "data"
+            
+            {% for registro in registros %}
+              data.push({
+                "NOME": "{{ registro.nome.nome }}",
+                "ORGÃO/SETOR": "{{ registro.orgao_setor.orgao_setor }}",
+                "MUNICÍPIO": "{{ registro.municipio.municipio }}",
+                "ATIVIDADE": "{{ registro.atividade.atividade }}",
+                "Nº CONVÊNIO": "{{ registro.num_convenio }}",
+                "PARLAMENTAR": "{{ registro.parlamentar }}",
+                "OBJETO": "{{ registro.objeto }}",
+                "OGE/OGU": "{{ registro.oge_ogu|format_currency }}",
+                "CP-PREFEITURA": "{{ registro.cp_prefeitura|format_currency }}",
+                "VALOR TOTAL": "{{ registro.calcular_valores.0|format_currency }}",
+                "VALOR LIBERADO": "{{ registro.valor_liberado|format_currency }}",
+                "FALTA LIBERAR": "{{ registro.calcular_valores.1|format_currency }}",
+                "PRAZO DE VIGÊNCIA": "{{ registro.prazo_vigencia|formatar_data }}",
+                "SITUAÇÃO": "{{ registro.situacao }}",
+                "PROVIDENCIA": "{{ registro.providencia }}",
+                "STATUS": "{{ registro.status }}",
+                "DATA DE RECEPÇÃO": "{{ registro.data_recepcao|formatar_data }}",
+                "DATA DE INICIO": "{% if registro.data_inicio %}{{ registro.data_inicio|formatar_data }}{% else %}Sem data de início{% endif %}",
+                "DOCUMENTO PENDENTE": "{% if registro.documento_pendente %}Sim{% else %}Não{% endif %}",
+                "DOCUMENTO CANCELADO": "{% if registro.documento_cancelado %}Sim{% else %}Não{% endif %}",
+                "DATA DO FIM": "{% if registro.data_fim %}{{ registro.data_fim|formatar_data }}{% else %}Sem data de término{% endif %}",
+                "DURAÇÃO DE DIAS ÚTEIS": "{{ registro.dia_trabalho_total }}"
+              })
+            {% endfor %}
+
+            // Converta os dados para o formato CSV
+            var csv = 'NOME;ORGÃO/SETOR;MUNICÍPIO;ATIVIDADE;Nº CONVÊNIO;PARLAMENTAR;OBJETO;OGE/OGU;CP-PREFEITURA;VALOR TOTAL;VALOR LIBERADO;FALTA LIBERAR;PRAZO DE VIGÊNCIA;SITUAÇÃO;PROVIDENCIA;STATUS;DATA DE RECEPÇÃO;DATA DE INICIO;DOCUMENTO PENDENTE;DOCUMENTO CANCELADO;DATA DO FIM;DURAÇÃO DE DIAS ÚTEIS\n';
+            data.forEach(function(item) {
+              csv += item.NOME + ';' 
+                    + item["ORGÃO/SETOR"] + ';' 
+                    + item["MUNICÍPIO"] + ';' 
+                    + item["ATIVIDADE"] + ';' 
+                    + item["Nº CONVÊNIO"] + ';' 
+                    + item["PARLAMENTAR"] + ';'
+                    + item["OBJETO"] + ';'
+                    + item["OGE/OGU"] + ';'
+                    + item["CP-PREFEITURA"] + ';'
+                    + item["VALOR TOTAL"] + ';'
+                    + item["VALOR LIBERADO"] + ';'
+                    + item["FALTA LIBERAR"] + ';'
+                    + item["PRAZO DE VIGÊNCIA"] + ';'
+                    + item["SITUAÇÃO"] + ';'
+                    + item["PROVIDENCIA"] + ';'
+                    + item["STATUS"] + ';'
+                    + item["DATA DE RECEPÇÃO"] + ';'
+                    + item["DATA DE INICIO"] + ';'
+                    + item["DOCUMENTO PENDENTE"] + ';'
+                    + item["DOCUMENTO CANCELADO"] + ';'
+                    + item["DATA DO FIM"] + ';'
+                    + item["DURAÇÃO DE DIAS ÚTEIS"] + '\n';
+            })
+
+            // Crie um objeto Blob com o conteúdo CSV
+            var blob = new Blob([csv], {type: 'text/csv;charset=utf-8'});
+
+            // Crie uma URL para o Blob e crie um link para realizar o download do arquivo
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'registros.csv';
+            document.body.appendChild(a);
+            a.click();
+
+            // Limpe o URL criado
+            window.URL.revokeObjectURL(url);
+          })
+        </script>
+
+        <a class="btn btn-danger" href="{% url 'gerar_pdf_tabela_entidade' %}">Gerar PDF</a>
     </div>
   </div> 
 

@@ -222,7 +222,7 @@ def gerar_pdf(request):
     print(registros)
 
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'filename="nome_do_arquivo.pdf"'
+    response['Content-Disposition'] = 'filename="tabela_geral.pdf"'
 
     template = get_template(template_path)
     html = template.render(context)
@@ -249,7 +249,7 @@ def gerar_pdf_caixa_municipios_selecionados(request):
     }
 
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'filename="tabela_caixa.pdf"'
+    response['Content-Disposition'] = 'filename="tabela_CAIXA.pdf"'
 
     template = get_template(template_path)
     html = template.render(context)
@@ -277,7 +277,119 @@ def gerar_pdf_tabela_estado(request):
     template_path = 'tabela_geral_pdf.html'
 
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'filename="tabela_estado.pdf"'
+    response['Content-Disposition'] = 'filename="tabela_ESTADO.pdf"'
+
+    template = get_template(template_path)
+    html = template.render(context)
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    if pisa_status.err:
+        return HttpResponse("Erro ao gerar PDF", status=500)
+    
+    return response
+
+def gerar_pdf_tabela_fnde(request):
+    registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='FNDE')
+
+    # Recuperar dados para as listas suspensas
+    nomes = Nome.objects.all()
+    municipios = Municipio.objects.all()
+
+    # Crie o contexto com os dados
+    context = {
+        'nomes': nomes,
+        'municipios': municipios,
+        'registros': registros,
+    }
+
+    template_path = 'tabela_geral_pdf.html'
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="tabela_FNDE.pdf"'
+
+    template = get_template(template_path)
+    html = template.render(context)
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    if pisa_status.err:
+        return HttpResponse("Erro ao gerar PDF", status=500)
+    
+    return response
+
+def gerar_pdf_tabela_simec(request):
+    registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='SIMEC')
+
+    # Recuperar dados para as listas suspensas
+    nomes = Nome.objects.all()
+    municipios = Municipio.objects.all()
+
+    # Crie o contexto com os dados
+    context = {
+        'nomes': nomes,
+        'municipios': municipios,
+        'registros': registros,
+    }
+
+    template_path = 'tabela_geral_pdf.html'
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="tabela_SIMEC.pdf"'
+
+    template = get_template(template_path)
+    html = template.render(context)
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    if pisa_status.err:
+        return HttpResponse("Erro ao gerar PDF", status=500)
+    
+    return response
+
+def gerar_pdf_tabela_fns(request):
+    registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='FNS')
+
+    # Recuperar dados para as listas suspensas
+    nomes = Nome.objects.all()
+    municipios = Municipio.objects.all()
+
+    # Crie o contexto com os dados
+    context = {
+        'nomes': nomes,
+        'municipios': municipios,
+        'registros': registros,
+    }
+
+    template_path = 'tabela_geral_pdf.html'
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="tabela_FNS.pdf"'
+
+    template = get_template(template_path)
+    html = template.render(context)
+
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    if pisa_status.err:
+        return HttpResponse("Erro ao gerar PDF", status=500)
+    
+    return response
+
+def gerar_pdf_tabela_entidade(request):
+    registros = RegistroFuncionarios.objects.filter(orgao_setor__orgao_setor='Entidade')
+
+    # Recuperar dados para as listas suspensas
+    nomes = Nome.objects.all()
+    municipios = Municipio.objects.all()
+
+    # Crie o contexto com os dados
+    context = {
+        'nomes': nomes,
+        'municipios': municipios,
+        'registros': registros,
+    }
+
+    template_path = 'tabela_geral_pdf.html'
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="tabela_Entidade.pdf"'
 
     template = get_template(template_path)
     html = template.render(context)
